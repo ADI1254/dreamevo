@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a14" />
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
+  <title>DREAMEVO Owner Admin</title>
+  <link rel="stylesheet" href="admin.css?v=1" />
+</head>
+<body>
+  <main class="admin-wrap">
+    <header class="admin-head">
+      <h1>DREAMEVO Owner Admin</h1>
+      <a class="admin-link" href="index.html">Back to site</a>
+    </header>
+
+    <section class="admin-card" id="authCard">
+      <h2>Owner Sign In</h2>
+      <p class="admin-muted">Sign in with magic link. Only approved owner emails can edit settings.</p>
+      <form id="authForm" class="admin-form" novalidate>
+        <label for="ownerEmail">Owner Email</label>
+        <input id="ownerEmail" type="email" placeholder="you@dreamevo.com" autocomplete="email" required />
+        <button type="submit" id="sendLinkBtn">Send Magic Link</button>
+      </form>
+      <button type="button" id="refreshSessionBtn" class="admin-secondary">I clicked the link, refresh session</button>
+      <p id="authStatus" class="admin-status" aria-live="polite"></p>
+    </section>
+
+    <section class="admin-card is-hidden" id="settingsCard">
+      <div class="admin-settings-head">
+        <h2>Site Settings</h2>
+        <button type="button" id="signOutBtn" class="admin-secondary">Sign out</button>
+      </div>
+      <form id="settingsForm" class="admin-form">
+        <label for="ctaText">Hero CTA Text</label>
+        <input id="ctaText" type="text" maxlength="40" placeholder="START YOUR JOURNEY" />
+
+        <label for="reelUrl">Instagram Reel URL</label>
+        <input id="reelUrl" type="url" placeholder="https://www.instagram.com/reel/..." />
+
+        <label class="admin-check"><input id="showReel" type="checkbox" /> Show reel button</label>
+        <label class="admin-check"><input id="showChooseOwnDream" type="checkbox" /> Show "Choose your own dream" section</label>
+
+        <button type="submit" id="saveSettingsBtn">Save settings</button>
+      </form>
+      <p id="settingsStatus" class="admin-status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="admin.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# Verifies frontend build script on every push (optional safety check).
+# Deploy still happens via Vercel when the repo is connected there — no secrets required here.
+
+name: Frontend vercel-build check
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/ci-frontend.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & run vercel-build
+        env:
+          DREAMEVO_API_BASE: https://example.com
+          DREAMEVO_INTRO_VIDEO_URL: https://example.com/intro.mp4
+        run: |
+          npm install
+          npm run vercel-build
+          test -f config.runtime.js
+          node -e "require('fs').readFileSync('config.runtime.js','utf8').includes('DREAMEVO_API_BASE') || process.exit(1)"

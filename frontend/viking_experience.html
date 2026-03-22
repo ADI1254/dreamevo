@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Viking Sea - Cinematic Dream Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: #ecf0f1;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #bdc3c7;
+            font-style: italic;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .video-section {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+        }
+
+        #video-container {
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 6px;
+        }
+
+        .volume-control label {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .volume-control input[type="range"] {
+            flex: 1;
+            min-width: 150px;
+            cursor: pointer;
+        }
+
+        .volume-display {
+            min-width: 50px;
+            text-align: right;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .info-panel {
+            background: rgba(15, 52, 96, 0.8);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #ffd700;
+        }
+
+        .info-panel h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #ecf0f1;
+            margin-top: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.active {
+            background: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71;
+        }
+
+        .status-indicator.inactive {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: #bdc3c7;
+        }
+
+        .audio-layers {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .audio-layers h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .layer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .layer-item .icon {
+            font-size: 1.2rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            color: #95a5a6;
+        }
+
+        .responsive-notice {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            color: #2ecc71;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ VIKING SEA</h1>
+            <p class="subtitle">A Cinematic Dream Experience</p>
+        </header>
+
+        <div class="responsive-notice">
+            ✅ Multi-layer cinematic audio synchronized with 4K video
+        </div>
+
+        <div class="main-content">
+            <div class="video-section">
+                <div id="video-container"></div>
+
+                <div class="volume-control">
+                    <label for="masterVolume">🔊 Master Volume:</label>
+                    <input type="range" id="masterVolume" min="0" max="100" value="85">
+                    <div class="volume-display"><span id="volumeDisplay">85%</span></div>
+                </div>
+
+                <div class="controls">
+                    <button id="playBtn" onclick="vikingExperience.play()">▶️ Play</button>
+                    <button id="pauseBtn" onclick="vikingExperience.pause()" disabled>⏸️ Pause</button>
+                    <button id="resumeBtn" onclick="vikingExperience.resume()" disabled>▶️ Resume</button>
+                    <button id="stopBtn" onclick="vikingExperience.stop()">⏹️ Stop</button>
+                </div>
+
+                <div class="audio-layers">
+                    <h3>🎙️ Audio Layers</h3>
+                    <div class="layer-item">
+                        <span class="icon">🎼</span>
+                        <span><strong>Orchestral Score:</strong> Epic themes with dynamic intensity</span>
+                    </div>
+                    <div class="layer-item">
+                        <span class="icon">🌊</span>
+                        <span><strong>Cinematic SFX:</strong> Ships, waves, wind, battle sounds</span>
+                    </div>
+                    <div class="layer-item">
+                        <span class="icon">🎙️</span>
+                        <span><strong>Human Narration:</strong> Natural voice with emotional pacing</span>
+                    </div>
+                    <div class="layer-item">
+                        <span class="icon">🌫️</span>
+                        <span><strong>Ambient Pads:</strong> Emotional sustenance between dialogue</span>
+                    </div>
+                    <div class="layer-item">
+                        <span class="icon">🎚️</span>
+                        <span><strong>Smart Ducking:</strong> Music automatically reduces when voice speaks</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h2>Experience Status</h2>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <span class="status-indicator inactive" id="statusIndicator"></span>
+                        Playback Status
+                    </div>
+                    <div class="info-value" id="statusText">Stopped</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">📺 Video Timeline</div>
+                    <div class="info-value" id="videoTimeline">0:00 / 0:00</div>
+                    <div style="margin-top: 8px;">
+                        <input type="range" id="videoProgress" min="0" max="100" value="0" style="width: 100%; cursor: pointer;">
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">🎬 Current Scene</div>
+                    <div class="info-value" id="currentScene">Waiting to start</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">🎙️ Audio Layers Active</div>
+                    <div class="info-value" id="activeLayers">0/4</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">📊 Overall Progress</div>
+                    <div class="info-value" id="progressPercent">0%</div>
+                    <div style="margin-top: 8px; background: rgba(255,215,0,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, #ffd700, #ffed4e); width: 0%; transition: width 0.5s ease;"></div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">🔊 Master Volume</div>
+                    <div class="info-value" id="volumeInfo">85%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎼</div>
+                <h3>Orchestral Themes</h3>
+                <p>Epic multi-scene composition that shifts with narrative progression, from opening ceremonies to triumphant victories.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌊</div>
+                <h3>Cinematic Sound Design</h3>
+                <p>Layered SFX including ship sounds, ocean waves, wind, battle sequences, and atmospheric elements.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <h3>Human Voice Narration</h3>
+                <p>Premium TTS or ElevenLabs integration delivering authoritative, natural-sounding narration with dramatic pacing.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎚️</div>
+                <h3>Smart Volume Ducking</h3>
+                <p>Orchestral score automatically reduces volume when voice speaks, keeping narration crystal clear and immersive.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Scene Synchronization</h3>
+                <p>Video timeline automatically triggers audio scene changes, narrative cues, and SFX at precise moments.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Fully Responsive</h3>
+                <p>Optimized for desktop, tablet, and mobile devices with intelligent audio asset loading and playback.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the audio systems -->
+    <script src="viking_audio_system.js"></script>
+    <script src="viking_video_experience.js"></script>
+
+    <script>
+        let vikingExperience = null;
+
+        // Initialize experience on page load
+        async function initializeExperience() {
+            try {
+                vikingExperience = await initializeVikingExperience(
+                    'assets/videos/viking_sea.mp4.mp4',
+                    {
+                        containerId: 'video-container',
+                        masterVolume: 0.85,
+                        autoPlay: false
+                    }
+                );
+
+                // Setup UI controls
+                setupUI();
+                console.log('✅ Viking experience initialized');
+            } catch (error) {
+                console.error('❌ Initialization error:', error);
+            }
+        }
+
+        function setupUI() {
+            const videoElement = vikingExperience.videoElement;
+            const masterVolume = document.getElementById('masterVolume');
+            const videoProgress = document.getElementById('videoProgress');
+
+            // Volume control
+            masterVolume.addEventListener('change', (e) => {
+                const volume = parseInt(e.target.value) / 100;
+                vikingExperience.setVolume(volume);
+                document.getElementById('volumeDisplay').textContent = e.target.value + '%';
+                document.getElementById('volumeInfo').textContent = e.target.value + '%';
+            });
+
+            // Video progress control
+            videoProgress.addEventListener('change', (e) => {
+                if (videoElement.duration) {
+                    const time = (parseInt(e.target.value) / 100) * videoElement.duration;
+                    vikingExperience.seekTo(time);
+                }
+            });
+
+            // Update UI status every 500ms
+            setInterval(() => {
+                updateStatus();
+            }, 500);
+
+            // Initialize status
+            updateStatus();
+        }
+
+        function updateStatus() {
+            if (!vikingExperience) return;
+
+            const status = vikingExperience.getStatus();
+            const videoElement = vikingExperience.videoElement;
+
+            // Update status indicator
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (status.isPlaying) {
+                statusIndicator.classList.remove('inactive');
+                statusIndicator.classList.add('active');
+                statusText.textContent = '▶️ Playing';
+                document.getElementById('playBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                document.getElementById('resumeBtn').disabled = true;
+            } else {
+                statusIndicator.classList.remove('active');
+                statusIndicator.classList.add('inactive');
+                statusText.textContent = videoElement.currentTime > 0 ? '⏸️ Paused' : '⏹️ Stopped';
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                document.getElementById('resumeBtn').disabled = videoElement.currentTime === 0;
+            }
+
+            // Update timeline
+            const minutes = Math.floor(status.videoTime / 60);
+            const seconds = Math.floor(status.videoTime % 60);
+            const totalMinutes = Math.floor(status.videoDuration / 60);
+            const totalSeconds = Math.floor(status.videoDuration % 60);
+            
+            document.getElementById('videoTimeline').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')} / ${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+
+            // Update progress bar
+            if (videoElement.duration) {
+                const progress = (status.videoTime / status.videoDuration) * 100;
+                document.getElementById('videoProgress').value = progress;
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressPercent').textContent = progress.toFixed(1) + '%';
+            }
+
+            // Update scene info
+            document.getElementById('currentScene').textContent = status.currentScene || 'Waiting...';
+
+            // Update active layers
+            const audioStatus = status.audioStatus || {};
+            const activeLayers = (audioStatus.orchestralPlaying ? 1 : 0) + 
+                                 (audioStatus.voicePlaying ? 1 : 0) + 
+                                 (audioStatus.activeLayers || 0);
+            document.getElementById('activeLayers').textContent = activeLayers + '/4';
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeExperience);
+    </script>
+
+    <footer>
+        <p>🎭 DreamPulse Viking Sea Experience | Cinematic Audio & Video Synchronization</p>
+        <p style="font-size: 0.9rem; margin-top: 10px;">For the full cinematic effect, add orchestral music and sound effects to assets/audio/CINEMATIC_AUDIO/</p>
+    </footer>
+</body>
+</html>

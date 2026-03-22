@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Story — DreamPulse</title>
+  <style>
+    :root {
+      --bg: #0a0d12;
+      --card: #111621;
+      --accent: #6bd5ff;
+      --text: #e9f0ff;
+      --muted: #9fb3c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(107,213,255,0.1), transparent 30%),
+                  radial-gradient(circle at 80% 30%, rgba(120,92,255,0.12), transparent 35%),
+                  var(--bg);
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .shell {
+      width: min(960px, 100%);
+      background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.45);
+      padding: 28px;
+      backdrop-filter: blur(6px);
+    }
+    h1 { margin: 0 0 6px; letter-spacing: 0.4px; }
+    p { margin: 0 0 14px; color: var(--muted); line-height: 1.5; }
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    button {
+      background: linear-gradient(135deg, #5ed7ff, #6b8bff);
+      border: none;
+      color: #041021;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 0 10px 35px rgba(91, 167, 255, 0.35);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+    button:active { transform: translateY(1px); box-shadow: 0 6px 24px rgba(91,167,255,0.28); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #5ed7ff, #8ba7ff);
+      transition: width 180ms ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <h1>Claude Journey — Immersive TTS</h1>
+    <p>Plays the 2nd-person screenplay with free neural female TTS, lucid dreaming base layer, and scene-triggered ambience with ducking.</p>
+    <div class="controls">
+      <button id="startBtn">Start Experience</button>
+      <span class="pill" id="voiceName">Voice: pending...</span>
+      <span class="pill" id="sceneName">Scene: —</span>
+    </div>
+    <div class="status" id="status">Ready</div>
+    <div class="progress"><div class="progress-inner" id="progressFill"></div></div>
+  </div>
+  <script src="claude_experience_v2.js" defer></script>
+</body>
+</html>

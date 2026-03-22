@@ -1,0 +1,8 @@
+{
+  "name": "dreamevo-frontend",
+  "private": true,
+  "description": "Static DREAMEVO UI; Vercel runs vercel-build to inject API URL",
+  "scripts": {
+    "vercel-build": "node scripts/vercel-build.js"
+  }
+}

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#0a0a14" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#0a0a14" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DREAMEVO" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>DREAMEVO — Guided Dream Immersion</title>
+  <link rel="stylesheet" href="style.css?v=14" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="state-idle view-landing">
+
+  <!-- Background Canvas Layer -->
+  <div class="canvas-background">
+    <div class="bg-gradient-animated"></div>
+    <div class="bg-noise"></div>
+    <div class="bg-particles-layer">
+      <div class="particle-orb"></div>
+      <div class="particle-orb"></div>
+      <div class="particle-orb"></div>
+      <div class="particle-orb"></div>
+      <div class="particle-orb"></div>
+    </div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <!-- Main Application Container - Full Screen -->
+  <div class="app-wrapper">
+    <!-- Edge-case overlays (global, so they show over landing, world selection, or active) -->
+    <div class="edge-case-overlay" id="connectionErrorOverlay" aria-hidden="true">
+      <div class="email-collection-backdrop"></div>
+      <div class="email-collection-card edge-case-card">
+        <h2 class="email-collection-heading">Connection Unstable</h2>
+        <p class="email-collection-sub">It seems your connection is unstable. DREAMEVO requires a stable internet connection for the best experience.</p>
+        <div class="edge-case-actions">
+          <button type="button" class="email-collection-submit edge-case-btn" id="connectionErrorTryAgain">Try Again</button>
+          <button type="button" class="edge-case-btn edge-case-btn-secondary" id="connectionErrorDownloadOffline" aria-label="Download for offline (coming soon)">Download for Offline</button>
+        </div>
+      </div>
+    </div>
+    <div class="edge-case-overlay" id="continueJourneyOverlay" aria-hidden="true">
+      <div class="email-collection-backdrop"></div>
+      <div class="email-collection-card edge-case-card">
+        <h2 class="email-collection-heading">Welcome Back</h2>
+        <p class="email-collection-sub">Continue where you left off?</p>
+        <div class="edge-case-actions">
+          <button type="button" class="email-collection-submit edge-case-btn" id="continueJourneyYes">Yes</button>
+          <button type="button" class="edge-case-btn edge-case-btn-secondary" id="continueJourneyStartFresh">Start Fresh</button>
+        </div>
+      </div>
+    </div>
+    <div class="edge-case-overlay" id="returningUserOverlay" aria-hidden="true">
+      <div class="email-collection-backdrop"></div>
+      <div class="email-collection-card edge-case-card">
+        <h2 class="email-collection-heading">Welcome Back</h2>
+        <p class="email-collection-sub returning-user-email" id="returningUserEmailText">Ready for another journey?</p>
+        <div class="edge-case-actions">
+          <button type="button" class="email-collection-submit edge-case-btn" id="returningUserStartBtn">Start New Journey</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== DREAMPULSE LANDING (match Wix reference) — no "Built on Wix" ========== -->
+    <div class="landing-view" id="landingView">
+      <!-- Global header: moon + DREAMPULSE, Dream Modes, How It Works, Pricing -->
+      <header class="landing-nav">
+        <a href="#" class="landing-nav-logo" aria-label="DREAMEVO home">
+          <span class="landing-nav-moon" aria-hidden="true">🌙</span>
+          <span class="landing-nav-word">DREAMEVO</span>
+        </a>
+        <nav class="landing-nav-links">
+          <a href="#dream-modes" id="navDreamModes">Dream Modes</a>
+          <a href="#choose-your-own-dream">Choose your dream</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#contact-us">Contact</a>
+          <a href="#pricing">Pricing</a>
+        </nav>
+      </header>
+
+      <div class="landing-scroll">
+        <!-- Hero: Enter Your / Dream World — full-screen immersive -->
+        <section class="landing-hero" id="hero">
+          <h1 class="landing-hero-title">
+            <span class="landing-hero-line">Enter Your</span>
+            <span class="landing-hero-line landing-hero-gradient">Dream World</span>
+          </h1>
+          <p class="landing-hero-desc">Experience cinematic journeys through mystical realms. Train your mind for lucid awareness. Wake remembering every detail.</p>
+          <div class="landing-hero-ctas">
+            <button type="button" class="landing-cta landing-cta-primary landing-cta-primary--hero" id="landingCta">START YOUR JOURNEY</button>
+            <a href="#" class="landing-cta landing-cta-secondary landing-cta-secondary--reel" id="landingInstagramReel" aria-label="Watch on Instagram (opens in new tab)" style="display: none;">
+              <span class="landing-cta-play" aria-hidden="true">▶</span> Watch reel
+            </a>
+          </div>
+          <div class="landing-trust">
+            <span>★4.9/5 Rating</span>
+            <span>Secure & Private</span>
+            <span>iOS & Android</span>
+          </div>
+          <p class="landing-scroll-hint">SCROLL TO EXPLORE</p>
+          <span class="landing-scroll-arrow" aria-hidden="true">↓</span>
+        </section>
+
+        <!-- Stats: 300 Million + 3 glass cards -->
+        <section class="landing-section landing-stats" id="landing-stats">
+          <div class="landing-stats-text">
+            <h2 class="landing-stats-headline">
+              <span class="landing-stats-white">300 Million</span>
+              <span class="landing-stats-purple">Sleep Seekers.</span><br />
+              <span class="landing-stats-white">Zero Engaging</span>
+              <span class="landing-stats-white">Dreams.</span>
+            </h2>
+            <p class="landing-stats-body">Until now. DREAMEVO combines neuroscience-backed techniques with adaptive audio and AI-crafted narratives to guide you into lucid, memorable dreams.</p>
+            <a href="#" class="landing-stats-link">Learn about the science <span class="landing-stats-arrow">→</span></a>
+          </div>
+          <div class="landing-stats-cards">
+            <div class="landing-stat-card">
+              <span class="landing-stat-icon" aria-hidden="true">👥</span>
+              <span class="landing-stat-value">300M+</span>
+              <span class="landing-stat-label">SLEEP SEEKERS</span>
+              <span class="landing-stat-desc">Struggling with quality rest</span>
+            </div>
+            <div class="landing-stat-card">
+              <span class="landing-stat-icon" aria-hidden="true">⚡</span>
+              <span class="landing-stat-value">43%</span>
+              <span class="landing-stat-label">LUCID SUCCESS</span>
+              <span class="landing-stat-desc">Users lucid dream in 30 days</span>
+            </div>
+            <div class="landing-stat-card">
+              <span class="landing-stat-icon" aria-hidden="true">🌙</span>
+              <span class="landing-stat-value">87%</span>
+              <span class="landing-stat-label">SLEEP QUALITY</span>
+              <span class="landing-stat-desc">Report improved restfulness</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dream Modes: ROMANTIC (left), JOURNEY (center), DEVOTIONAL (right) — entire cards clickable -->
+        <section class="landing-section landing-worlds" id="dream-modes">
+          <h2 class="landing-section-title">Choose Your World</h2>
+          <p class="landing-section-sub">Tap a mode to begin — three distinct dream experiences</p>
+          <div class="landing-world-cards" id="landingWorldCards">
+            <div class="landing-world-card-wrap">
+              <article class="landing-world-card landing-world-card--clickable" data-mode="clearing" tabindex="0" role="button" aria-label="Romantic mode — Explore">
+                <div class="landing-world-card-img-wrap">
+                  <img src="assets/images/romantic.png.png" alt="Romantic" class="landing-world-card-img" />
+                </div>
+                <h3 class="landing-world-name">ROMANTIC</h3>
+                <p class="landing-world-sub">Intimate, reflective experiences under the stars.</p>
+                <button type="button" class="landing-world-btn" data-landing-world="clearing">Explore</button>
+              </article>
+            </div>
+            <div class="landing-world-card-wrap landing-world-card-wrap--center">
+              <span class="landing-world-badge">Most Popular</span>
+              <article class="landing-world-card landing-world-card--clickable" data-mode="journey" tabindex="0" role="button" aria-label="Journey mode — Explore">
+                <div class="landing-world-card-img-wrap">
+                  <img src="assets/images/mainjourney.png.png" alt="Journey" class="landing-world-card-img" />
+                </div>
+                <h3 class="landing-world-name">JOURNEY</h3>
+                <p class="landing-world-sub">Epic adventures through mystical lands. For the adventurer seeking wonder.</p>
+                <button type="button" class="landing-world-btn" data-landing-world="journey" id="exploreJourneyBtn">Explore</button>
+              </article>
+            </div>
+            <div class="landing-world-card-wrap">
+              <article class="landing-world-card landing-world-card--clickable" data-mode="sanctuary" tabindex="0" role="button" aria-label="Devotional mode — Enter">
+                <div class="landing-world-card-img-wrap">
+                  <img src="assets/images/devotional.png.png" alt="Devotional" class="landing-world-card-img" />
+                </div>
+                <h3 class="landing-world-name">DEVOTIONAL</h3>
+                <p class="landing-world-sub">Sacred spaces and contemplative journeys. For those seeking inner peace.</p>
+                <button type="button" class="landing-world-btn" data-landing-world="sanctuary">Enter</button>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- Choose your own dream — coming soon (email waitlist only) -->
+        <section class="landing-section landing-choose-own" id="choose-your-own-dream">
+          <div class="landing-choose-own-inner">
+            <span class="landing-choose-own-badge">Coming soon</span>
+            <h2 class="landing-choose-own-title">Choose your own dream</h2>
+            <p class="landing-choose-own-desc">Soon you’ll shape a fully custom dream journey. Leave your email and we’ll notify you when it launches.</p>
+            <form class="landing-choose-own-form" id="chooseOwnDreamForm" novalidate>
+              <label class="visually-hidden" for="chooseOwnDreamEmail">Email</label>
+              <input type="email" id="chooseOwnDreamEmail" class="landing-choose-own-input" placeholder="you@example.com" required autocomplete="email" />
+              <button type="submit" class="landing-choose-own-submit" id="chooseOwnDreamSubmit">Notify me</button>
+            </form>
+            <p class="landing-choose-own-note">No spam — one line when we’re ready.</p>
+          </div>
+        </section>
+
+        <!-- How It Works: dual-column with timeline (match reference) -->
+        <section class="landing-section landing-how" id="how-it-works">
+          <h2 class="landing-how-title">Your Journey to Lucidity</h2>
+          <p class="landing-how-sub">A simple path to complex dreams</p>
+          <div class="landing-how-accent"></div>
+          <div class="landing-how-columns">
+            <div class="landing-how-left">
+              <p class="landing-how-intro">Select from Journey, Devotional, or Romantic modes.</p>
+              <div class="landing-how-block">
+                <h3 class="landing-how-block-title">Listen & Relax</h3>
+                <p class="landing-how-block-desc">Let the adaptive audio guide you into a hypnagogic state.</p>
+              </div>
+              <div class="landing-how-block">
+                <h3 class="landing-how-block-title">Dream Vividly</h3>
+                <p class="landing-how-block-desc">Experience high-fidelity lucid dreams controlled by you.</p>
+              </div>
+              <div class="landing-how-block">
+                <h3 class="landing-how-block-title">Wake Remembering</h3>
+                <p class="landing-how-block-desc">Recall every detail with our active memory triggers.</p>
+              </div>
+            </div>
+            <div class="landing-how-right">
+              <div class="landing-how-timeline">
+                <div class="landing-how-step">
+                  <div class="landing-how-line-wrap">
+                    <span class="landing-how-num">01</span>
+                    <span class="landing-how-line"></span>
+                  </div>
+                  <div class="landing-how-step-content">
+                    <p class="landing-how-step-text">Select from Journey, Devotional, or Romantic modes.</p>
+                  </div>
+                </div>
+                <div class="landing-how-step">
+                  <div class="landing-how-line-wrap">
+                    <span class="landing-how-num">02</span>
+                    <span class="landing-how-line"></span>
+                  </div>
+                  <div class="landing-how-step-content">
+                    <h3 class="landing-how-step-title">Listen & Relax</h3>
+                    <p class="landing-how-step-desc">Let the adaptive audio guide you into a hypnagogic state.</p>
+                  </div>
+                </div>
+                <div class="landing-how-step">
+                  <div class="landing-how-line-wrap">
+                    <span class="landing-how-num">03</span>
+                    <span class="landing-how-line"></span>
+                  </div>
+                  <div class="landing-how-step-content">
+                    <h3 class="landing-how-step-title">Dream Vividly</h3>
+                    <p class="landing-how-step-desc">Experience high-fidelity lucid dreams controlled by you.</p>
+                  </div>
+                </div>
+                <div class="landing-how-step">
+                  <div class="landing-how-line-wrap">
+                    <span class="landing-how-num">04</span>
+                    <span class="landing-how-line landing-how-line--last"></span>
+                  </div>
+                  <div class="landing-how-step-content">
+                    <h3 class="landing-how-step-title">Wake Remembering</h3>
+                    <p class="landing-how-step-desc">Recall every detail with our active memory triggers.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pricing: Invest in Your Nights (payment gateway to be added later) -->
+        <section class="landing-section landing-pricing" id="pricing">
+          <h2 class="landing-pricing-title">Invest in Your Nights</h2>
+          <p class="landing-pricing-sub">Choose the plan that fits your journey.</p>
+          <div class="landing-pricing-grid">
+            <div class="landing-pricing-card">
+              <h3 class="landing-pricing-card-name">Dream Explorer</h3>
+              <p class="landing-pricing-card-price"><span class="landing-pricing-currency">₹</span>0 <span class="landing-pricing-period">/forever</span></p>
+              <ul class="landing-pricing-features">
+                <li>Access to 3 basic journeys</li>
+                <li>Basic Dream Journal</li>
+                <li>Community Access</li>
+              </ul>
+              <button type="button" class="landing-pricing-btn landing-pricing-btn--secondary" id="pricingExplorerBtn">Start Free</button>
+            </div>
+            <div class="landing-pricing-card landing-pricing-card--popular">
+              <span class="landing-pricing-badge">MOST POPULAR</span>
+              <h3 class="landing-pricing-card-name">Dream Master</h3>
+              <p class="landing-pricing-card-price"><span class="landing-pricing-currency">₹</span>199 <span class="landing-pricing-period">/per month</span></p>
+              <ul class="landing-pricing-features">
+                <li>Unlimited Journeys</li>
+                <li>Advanced AI Interpretation</li>
+                <li>REM Detection</li>
+                <li>Offline Mode</li>
+              </ul>
+              <button type="button" class="landing-pricing-btn landing-pricing-btn--primary" id="pricingMasterBtn">Coming Soon</button>
+            </div>
+            <div class="landing-pricing-card">
+              <h3 class="landing-pricing-card-name">Dream Architect</h3>
+              <p class="landing-pricing-card-price"><span class="landing-pricing-currency">₹</span>1,799 <span class="landing-pricing-period">/per year</span></p>
+              <ul class="landing-pricing-features">
+                <li>Everything in Master</li>
+                <li>Save 30%</li>
+                <li>Priority Support</li>
+                <li>Exclusive "Void" Mode</li>
+              </ul>
+              <button type="button" class="landing-pricing-btn landing-pricing-btn--secondary" id="pricingArchitectBtn">Coming Soon</button>
+            </div>
+          </div>
+          <div class="landing-pricing-waitlist" id="pricingWaitlistBox" aria-live="polite">
+            <p class="landing-pricing-waitlist-title">Dream Master / Dream Architect is coming soon</p>
+            <p class="landing-pricing-waitlist-sub">Share your email to get early access and pricing launch updates.</p>
+            <form class="landing-pricing-waitlist-form" id="pricingWaitlistForm" novalidate>
+              <input type="email" id="pricingWaitlistEmail" class="landing-pricing-waitlist-input" placeholder="you@example.com" required autocomplete="email" />
+              <input type="hidden" id="pricingWaitlistPlan" value="" />
+              <button type="submit" class="landing-pricing-waitlist-submit" id="pricingWaitlistSubmit">Join waitlist</button>
+            </form>
+            <p class="landing-pricing-waitlist-note" id="pricingWaitlistPlanLabel"></p>
+          </div>
+        </section>
+
+        <!-- Contact & social -->
+        <section class="landing-section landing-contact" id="contact-us">
+          <h2 class="landing-contact-title">Contact Us</h2>
+          <p class="landing-contact-sub">Questions, collaborations, or support. Reach us directly.</p>
+          <p class="landing-contact-email-text">dreamevo22@gmail.com</p>
+          <div class="landing-contact-actions">
+            <a
+              class="landing-contact-email"
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=dreamevo22@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Send email to DREAMEVO via Gmail"
+            >
+              Send via Gmail
+            </a>
+            <a
+              class="landing-contact-email landing-contact-email--secondary"
+              href="mailto:dreamevo22@gmail.com"
+              aria-label="Send email to DREAMEVO via default mail app"
+            >
+              Use default mail app
+            </a>
+          </div>
+
+          <div class="landing-contact-socials">
+            <a
+              class="landing-social-btn"
+              href="https://www.instagram.com/dreamevoo/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow DREAMEVO on Instagram"
+            >
+              <span class="landing-social-icon" aria-hidden="true">◎</span>
+              <span>Instagram</span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Full-Screen World Selection Screen (hidden until CTA wired) -->
+    <div class="world-selection-screen" id="worldSelectionScreen" aria-hidden="true">
+      <div class="world-selection-inner">
+        <!-- Brand: spaced so it never overlaps cards -->
+        <header class="world-selection-header">
+          <h1 class="brand-title">
+            <span class="brand-word">DREAM</span><span class="brand-word">EVO</span>
+          </h1>
+        </header>
+
+        <!-- World Cards: Devotional (left), Journey (center), Romantic (right) -->
+        <div class="world-cards-container" id="worldCardsContainer">
+        <div class="world-card" data-world="sanctuary" id="cardSanctuary">
+          <div class="card-background card-bg-sanctuary">
+            <div class="card-image-wrap">
+              <img src="assets/images/devotional.png.png" alt="Devotional" class="card-bg-image" />
+            </div>
+            <div class="card-overlay"></div>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">DEVOTIONAL</h2>
+            <button type="button" class="card-choose-btn" data-choose-world="sanctuary">Choose Experience</button>
+          </div>
+          <div class="card-selection-indicator"></div>
+        </div>
+
+        <div class="world-card world-card--popular" data-world="journey" id="cardJourney">
+          <span class="world-card-badge"><span class="world-card-badge-icon" aria-hidden="true">👑</span> MOST POPULAR</span>
+          <div class="card-background card-bg-journey">
+            <div class="card-image-wrap">
+              <img src="assets/images/mainjourney.png.png" alt="Journey" class="card-bg-image" />
+            </div>
+            <div class="card-overlay"></div>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">JOURNEY</h2>
+            <button type="button" class="card-choose-btn" data-choose-world="journey">Choose Experience</button>
+          </div>
+          <div class="card-selection-indicator"></div>
+        </div>
+
+        <div class="world-card" data-world="clearing" id="cardRomantic">
+          <div class="card-background card-bg-clearing">
+            <div class="card-image-wrap">
+              <img src="assets/images/romantic.png.png" alt="Romantic" class="card-bg-image" />
+            </div>
+            <div class="card-overlay"></div>
+          </div>
+          <div class="card-content">
+            <h2 class="card-title">ROMANTIC</h2>
+            <button type="button" class="card-choose-btn" data-choose-world="clearing">Choose Experience</button>
+          </div>
+          <div class="card-selection-indicator"></div>
+        </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- Email collection overlay: appears after "Choose Experience" if email not in localStorage -->
+      <div class="email-collection-screen" id="emailCollectionScreen" aria-hidden="true">
+        <div class="email-collection-backdrop"></div>
+        <div class="email-collection-card">
+          <h2 class="email-collection-heading">One Last Step Before Your Journey</h2>
+          <p class="email-collection-sub">Enter your email to unlock your free 20-minute cinematic sleep experience</p>
+          <form class="email-collection-form" id="emailCollectionForm" novalidate>
+            <div class="email-input-wrap">
+              <input type="email" id="emailCollectionInput" class="email-collection-input" placeholder="you@example.com" required autocomplete="email" />
+              <span class="email-input-glow"></span>
+            </div>
+            <p class="email-collection-error" id="emailCollectionError" role="alert" aria-live="polite"></p>
+            <button type="submit" class="email-collection-submit" id="emailCollectionSubmit" disabled>
+              <span class="email-collection-submit-text">Begin My Journey</span>
+              <span class="email-collection-submit-arrow" aria-hidden="true">→</span>
+            </button>
+          </form>
+          <p class="email-collection-note">We'll send you 2 more journeys for free. No spam, ever.</p>
+        </div>
+      </div>
+
+      <!-- Secondary Controls (Bottom Center, Hidden until world selected) -->
+      <div class="secondary-controls" id="secondaryControls">
+        <!-- Mood Selector -->
+        <div class="mood-section" id="moodSection">
+          <p class="mood-label">Choose your mood</p>
+          <div class="mood-buttons">
+            <button class="mood-btn" data-mood="calm" id="moodCalm">
+              <span class="mood-icon">🌙</span>
+              <span class="mood-text">Calm</span>
+            </button>
+            <button class="mood-btn" data-mood="confident" id="moodConfident">
+              <span class="mood-icon">🔥</span>
+              <span class="mood-text">Confident</span>
+            </button>
+            <button class="mood-btn active" data-mood="curious" id="moodCurious">
+              <span class="mood-icon">🔮</span>
+              <span class="mood-text">Curious</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div class="name-section" id="nameSection">
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="userName" 
+              class="input-modern" 
+              placeholder="Your name" 
+              autocomplete="off"
+            />
+            <div class="input-glow"></div>
+          </div>
+        </div>
+
+        <!-- Start Dream CTA -->
+        <div class="cta-section" id="ctaSection">
+          <button id="startButton" class="cta-button" onclick="handleStartDream()">
+            <span class="button-text">Enter Dream</span>
+            <span class="button-glow"></span>
+            <span class="button-pulse"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hidden dropdown for backward compatibility -->
+      <select id="worldSelect" class="select-modern" style="display: none;">
+        <option value="journey">Journey</option>
+        <option value="sanctuary">Sanctuary</option>
+        <option value="clearing">Romantic</option>
+      </select>
+
+      <select id="moodSelect" class="select-modern" style="display: none;">
+        <option value="calm">Calm</option>
+        <option value="confident">Confident</option>
+        <option value="curious">Curious</option>
+      </select>
+
+    </div>
+
+    <!-- Experience Canvas (Hidden until active) -->
+    <main class="experience-canvas" id="experienceCanvas">
+      
+      <!-- Idle State: Abstract Visuals -->
+      <div class="canvas-idle" id="canvasIdle">
+        <div class="idle-visual-1"></div>
+        <div class="idle-visual-2"></div>
+        <div class="idle-visual-3"></div>
+      </div>
+
+      <!-- Active State: Dream Video Container -->
+      <div class="dream-video-wrapper" id="dreamVideoWrapper">
+        <div class="video-container">
+          <video
+            id="dreamVideo"
+            class="dream-video-element"
+            playsinline
+            webkit-playsinline="true"
+            preload="auto"
+          ></video>
+          <div class="video-glow-border"></div>
+          <div class="video-overlay-gradient"></div>
+        </div>
+        
+        <!-- Transition Overlay -->
+        <div class="dream-transition" id="dreamTransition">
+          <div class="transition-content">
+            <div class="transition-indicator">
+              <div class="indicator-ring"></div>
+              <div class="indicator-core"></div>
+            </div>
+            <p class="transition-message" id="transitionMessage">
+              <span class="message-word">Drifting</span>
+              <span class="message-word">into</span>
+              <span class="message-word">dreams…</span>
+            </p>
+            <div class="transition-progress">
+              <div class="progress-track"></div>
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tap once: very subtle pause + scrub only (low visual weight). -->
+        <div class="playback-escape-hatch" id="playbackEscapeHatch" aria-hidden="true">
+          <div class="playback-escape-controls playback-escape-controls--minimal" id="playbackEscapeControls">
+            <button type="button" class="playback-escape-btn playback-escape-pause" id="playbackPausePlayBtn" aria-label="Pause">‖</button>
+            <div class="playback-escape-seek-col">
+              <label class="visually-hidden" for="playbackSeekSlider">Position in journey audio</label>
+              <input type="range" class="playback-escape-seek" id="playbackSeekSlider" min="0" max="1000" value="0" disabled aria-label="Scrub journey audio" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Before journey: reminder; intro video plays with journey audio (backend/static/intro_video.mp4). -->
+      <div
+        class="dream-prep-overlay"
+        id="dreamPrepOverlay"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dreamPrepTitle2"
+      >
+        <div class="dream-prep-inner">
+          <div class="dream-prep-panel is-hidden" id="dreamPrepStep2">
+            <p class="dream-prep-kicker">Almost there</p>
+            <h2 class="dream-prep-title" id="dreamPrepTitle2">Plug in your earphones &amp; close your eyes</h2>
+            <p class="dream-prep-rest-line">Lie down and rest.</p>
+            <p class="dream-prep-lead">
+              The journey is designed to be heard <strong>while you rest</strong>. Keep your eyes closed and follow the voice. If you need to pause or adjust position, tap once for very subtle controls at the bottom.
+            </p>
+            <button type="button" class="dream-prep-btn" id="dreamPrepContinue2">Begin journey</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Audio Element (preload=auto for faster start) -->
+  <audio id="ambientAudio" loop preload="auto">
+    <source src="assets/ambient.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Injected on Vercel via npm run vercel-build (DREAMEVO_API_BASE); safe stub for local -->
+  <script src="config.runtime.js"></script>
+  <!-- Optional: copy config.example.js to config.js for Supabase / overrides -->
+  <script src="config.js"></script>
+  <script src="script.js?v=22"></script>
+  <script src="debug.js?v=5"></script>
+</body>
+</html>

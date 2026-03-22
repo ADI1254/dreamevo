@@ -1,0 +1,50 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Secrets (never commit)
+.env
+.env.*
+!.env.example
+frontend/config.js
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Node (if you add tooling later)
+node_modules/
+
+# Large / optional — not needed for Render (FastAPI + stories + static)
+# Remove these lines if you intentionally want them in the repo (may need Git LFS).
+backend/SkyReels-V2/
+TTS/
+
+# --- Lean repo: heavy / optional folders (media often on Cloudflare R2 instead) ---
+# See docs/LEAN_PUSH_TO_GITHUB.md
+audio/
+wix-integration/
+frontend/assets/audio/
+frontend/assets/videos/
+frontend/SOUND EFFECTS/
+
+# Large single files (GitHub max ~100MB per file; prefer CDN for video)
+backend/static/*.mp4
+backend/static/*.webm
+
+# Cursor / local tooling (optional)
+.cursor/
+
+# Logs & temp
+*.log
+.cache/

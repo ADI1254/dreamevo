@@ -1,0 +1,4 @@
+# ElevenLabs Narration Generator
+
+elevenlabs==0.2.27
+python-dotenv==1.0.0
