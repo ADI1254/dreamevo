@@ -188,6 +188,7 @@
             <form class="landing-choose-own-form" id="chooseOwnDreamForm" novalidate>
               <label class="visually-hidden" for="chooseOwnDreamEmail">Email</label>
               <input type="email" id="chooseOwnDreamEmail" class="landing-choose-own-input" placeholder="you@example.com" required autocomplete="email" />
+              <div class="turnstile-wrap" id="turnstileChooseOwn" aria-live="polite"></div>
               <button type="submit" class="landing-choose-own-submit" id="chooseOwnDreamSubmit">Notify me</button>
             </form>
             <p class="landing-choose-own-note">No spam — one line when we’re ready.</p>
@@ -306,6 +307,7 @@
             <form class="landing-pricing-waitlist-form" id="pricingWaitlistForm" novalidate>
               <input type="email" id="pricingWaitlistEmail" class="landing-pricing-waitlist-input" placeholder="you@example.com" required autocomplete="email" />
               <input type="hidden" id="pricingWaitlistPlan" value="" />
+              <div class="turnstile-wrap" id="turnstilePricing" aria-live="polite"></div>
               <button type="submit" class="landing-pricing-waitlist-submit" id="pricingWaitlistSubmit">Join waitlist</button>
             </form>
             <p class="landing-pricing-waitlist-note" id="pricingWaitlistPlanLabel"></p>
@@ -421,6 +423,7 @@
               <input type="email" id="emailCollectionInput" class="email-collection-input" placeholder="you@example.com" required autocomplete="email" />
               <span class="email-input-glow"></span>
             </div>
+            <div class="turnstile-wrap" id="turnstileMainEmail" aria-live="polite"></div>
             <p class="email-collection-error" id="emailCollectionError" role="alert" aria-live="polite"></p>
             <button type="submit" class="email-collection-submit" id="emailCollectionSubmit" disabled>
               <span class="email-collection-submit-text">Begin My Journey</span>
@@ -581,7 +584,8 @@
   <script src="config.runtime.js"></script>
   <!-- Optional: copy config.example.js to config.js for Supabase / overrides -->
   <script src="config.js"></script>
-  <script src="script.js?v=24"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <script src="script.js?v=25"></script>
   <script src="debug.js?v=5"></script>
 </body>
 </html>

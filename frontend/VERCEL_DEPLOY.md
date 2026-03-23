@@ -25,6 +25,9 @@
 |------|----------|--------|
 | `SUPABASE_URL` | **Yes** | Project URL from Supabase → Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Yes** | **Server only.** Never expose in the browser or commit. |
+| `TURNSTILE_SECRET_KEY` | Recommended | Cloudflare Turnstile secret used by `/api/save-email` server verification |
+| `EMAIL_RATE_WINDOW_MS` | Optional | Rate-limit window (default `600000`) |
+| `EMAIL_RATE_MAX_REQUESTS` | Optional | Max requests per IP+UA per window (default `15`) |
 
 **Build-time / client (optional — injected into `config.runtime.js`):**
 
@@ -35,6 +38,7 @@
 | `DREAMEVO_MEDIA_BASE_URL` | Prefix for `assets/videos/...` |
 | `DREAMEVO_STEMS_BASE_URL` | Stem MP3s base URL |
 | `DREAMEVO_AMBIENT_URL` | Landing ambient loop URL |
+| `DREAMEVO_TURNSTILE_SITE_KEY` | Public Turnstile site key for frontend widgets |
 
 **Client Supabase (optional):** For `journey_analytics` / `feedback` / `site_settings`, keep `config.js` (from `config.example.js`) with **anon** key — not the service role.
 

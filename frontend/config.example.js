@@ -28,4 +28,6 @@
   // window.DREAMEVO_STEMS_BASE_URL = 'https://media.yourdomain.com/cinematic';
   /** Optional: landing ambient loop from R2 */
   // window.DREAMEVO_AMBIENT_URL = 'https://media.yourdomain.com/ambient.mp3';
+  /** Optional: Cloudflare Turnstile site key for anti-bot checks on email forms */
+  // window.DREAMEVO_TURNSTILE_SITE_KEY = '0x4AAAA...';
 })();

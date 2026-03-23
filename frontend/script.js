@@ -324,6 +324,34 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
 }
 
+function getTurnstileTokenFromForm(formId) {
+  var form = document.getElementById(formId);
+  if (!form) return '';
+  var tokenInput = form.querySelector('input[name="cf-turnstile-response"], textarea[name="cf-turnstile-response"]');
+  return tokenInput && tokenInput.value ? String(tokenInput.value).trim() : '';
+}
+
+function initTurnstileWidgets() {
+  if (typeof window === 'undefined') return;
+  if (!window.DREAMEVO_TURNSTILE_SITE_KEY) return;
+  if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+    setTimeout(initTurnstileWidgets, 400);
+    return;
+  }
+  var siteKey = String(window.DREAMEVO_TURNSTILE_SITE_KEY).trim();
+  if (!siteKey) return;
+  ['turnstileChooseOwn', 'turnstilePricing', 'turnstileMainEmail'].forEach(function (id) {
+    var node = document.getElementById(id);
+    if (!node || node.getAttribute('data-turnstile-mounted') === '1') return;
+    try {
+      window.turnstile.render('#' + id, { sitekey: siteKey, theme: 'dark' });
+      node.setAttribute('data-turnstile-mounted', '1');
+    } catch (e) {
+      console.warn('Turnstile render failed:', id, e);
+    }
+  });
+}
+
 /**
  * Save email via Vercel serverless POST /api/save-email (service role on server — no anon key in browser).
  * Uses upsert: one row per email in Supabase email_captures.
@@ -331,6 +359,13 @@ function isValidEmail(value) {
  */
 function saveEmailToSupabase(email, opts) {
   if (typeof window !== 'undefined' && window.DREAMEVO_DISABLE_EMAIL_API) {
+    return Promise.resolve();
+  }
+  var formId = (opts && opts.formId) ? String(opts.formId) : '';
+  var turnstileToken = formId ? getTurnstileTokenFromForm(formId) : '';
+  var turnstileRequired = !!(typeof window !== 'undefined' && window.DREAMEVO_TURNSTILE_SITE_KEY);
+  if (turnstileRequired && !turnstileToken) {
+    showToast('Please complete verification and try again.');
     return Promise.resolve();
   }
   var source = (opts && opts.source) ? opts.source : 'app_start';
@@ -341,7 +376,8 @@ function saveEmailToSupabase(email, opts) {
     email: email.trim().toLowerCase(),
     source: source,
     mode_selected: modeSel,
-    user_agent: typeof navigator !== 'undefined' && navigator.userAgent ? navigator.userAgent : null
+    user_agent: typeof navigator !== 'undefined' && navigator.userAgent ? navigator.userAgent : null,
+    turnstile_token: turnstileToken || null
   };
   return fetch(apiUrl('/api/save-email'), {
     method: 'POST',
@@ -2680,6 +2716,7 @@ function init() {
   try {
     // Get all elements
     getElements();
+    initTurnstileWidgets();
 
     if (typeof window !== 'undefined' && window.DREAMEVO_AMBIENT_URL) {
       var ambEl = document.getElementById('ambientAudio');
@@ -2842,7 +2879,7 @@ function init() {
           submitBtn.disabled = true;
           submitBtn.textContent = 'Saved…';
         }
-        saveEmailToSupabase(email, { source: 'choose_own_dream_waitlist', mode_selected: null }).then(function () {
+        saveEmailToSupabase(email, { source: 'choose_own_dream_waitlist', mode_selected: null, formId: 'chooseOwnDreamForm' }).then(function () {
           showToast("You're on the list — we'll email you when custom dreams launch.");
           if (chooseOwnDreamForm) chooseOwnDreamForm.reset();
           if (submitBtn) {
@@ -2906,7 +2943,7 @@ function init() {
           submitBtn.textContent = 'Saving...';
         }
         var sourceName = plan === 'dream_architect' ? 'pricing_dream_architect_waitlist' : 'pricing_dream_master_waitlist';
-        saveEmailToSupabase(email, { source: sourceName, mode_selected: null }).then(function () {
+        saveEmailToSupabase(email, { source: sourceName, mode_selected: null, formId: 'pricingWaitlistForm' }).then(function () {
           showToast('You are on the ' + (plan === 'dream_architect' ? 'Dream Architect' : 'Dream Master') + ' waitlist.');
           if (pricingWaitlistForm) pricingWaitlistForm.reset();
           if (pricingWaitlistPlanLabel) pricingWaitlistPlanLabel.textContent = '';
@@ -3031,7 +3068,7 @@ function init() {
         if (el.moodSelect) el.moodSelect.value = appState.mood || 'curious';
 
         // Save to Supabase; on failure we already log + toast inside saveEmailToSupabase
-        saveEmailToSupabase(email).then(function () {
+        saveEmailToSupabase(email, { formId: 'emailCollectionForm' }).then(function () {
           var screen = el.emailCollectionScreen;
           if (screen) {
             screen.classList.remove('is-visible');
