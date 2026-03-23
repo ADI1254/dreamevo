@@ -393,13 +393,22 @@ function saveEmailToSupabase(email, opts) {
     body: JSON.stringify(payload)
   }).then(function (res) {
     if (!res.ok) {
-      console.error('save-email failed:', res.status, res.statusText);
-      var shouldToast =
-        !(typeof window !== 'undefined' &&
-          window.location &&
-          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
-          res.status === 404);
-      if (shouldToast) showToast("Couldn't save email, but enjoy your journey!");
+      return res.json().catch(function () { return {}; }).then(function (errBody) {
+        console.error('save-email failed:', res.status, res.statusText, errBody);
+        var msg = (errBody && errBody.error) ? String(errBody.error) : '';
+        var isCaptchaMsg = /captcha/i.test(msg);
+        if (isCaptchaMsg) {
+          showToast('Verification required. Please retry.');
+          return Promise.resolve();
+        }
+        var shouldToast =
+          !(typeof window !== 'undefined' &&
+            window.location &&
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+            res.status === 404);
+        if (shouldToast) showToast("Couldn't save email, but enjoy your journey!");
+        return Promise.resolve();
+      });
     }
     return Promise.resolve();
   }).catch(function (err) {
@@ -861,7 +870,16 @@ function getModeTrackUrl(world) {
   };
   var file = byWorld[world];
   if (!file) return '';
-  return getBackendStaticBaseUrl().replace(/\/$/, '') + '/audio_files/' + file;
+  if (typeof window !== 'undefined' && window.DREAMEVO_MODE_AUDIO_BASE_URL) {
+    return String(window.DREAMEVO_MODE_AUDIO_BASE_URL).replace(/\/$/, '') + '/' + file;
+  }
+  if (typeof window !== 'undefined' && window.DREAMEVO_STEMS_BASE_URL) {
+    return String(window.DREAMEVO_STEMS_BASE_URL).replace(/\/$/, '') + '/' + file;
+  }
+  if (isLocalHostRuntime()) {
+    return getBackendStaticBaseUrl().replace(/\/$/, '') + '/audio_files/' + file;
+  }
+  return '';
 }
 
 function getModeTrackFallbackUrl(world) {
@@ -872,7 +890,10 @@ function getModeTrackFallbackUrl(world) {
   };
   var file = byWorld[world];
   if (!file) return '';
-  return getBackendStaticBaseUrl().replace(/\/$/, '') + '/' + file;
+  if (isLocalHostRuntime()) {
+    return getBackendStaticBaseUrl().replace(/\/$/, '') + '/' + file;
+  }
+  return '';
 }
 
 let stemAudio = {
@@ -1213,7 +1234,7 @@ function attemptStemPlayback(world, mood, onComplete) {
     if (st.ambient) files.ambient = st.ambient;
     if (st.sfx) files.sfx = st.sfx;
   }
-
+  
   console.log('🎬 Attempting to load stems:', files);
   
   // Load stems with error handling
@@ -2076,7 +2097,7 @@ function getDreamLoopVideoSource(world, mood) {
       curious: 'assets/videos/exploration_curious.mp4'
     }
   };
-
+  
   const worldVideos = videoMap[world] || videoMap.journey;
   var rel = worldVideos[mood] || worldVideos.calm;
   return resolveMediaUrl(rel);
@@ -2098,7 +2119,7 @@ function getVideoSource(world, mood) {
 function loadVideo(videoSrc, opts) {
   const { dreamVideo } = getElements();
   var o = opts || {};
-
+  
   if (!dreamVideo || !videoSrc) return;
 
   dreamVideo.setAttribute('playsinline', '');
@@ -2106,7 +2127,7 @@ function loadVideo(videoSrc, opts) {
   try {
     dreamVideo.playsInline = true;
   } catch (e0) { /* ignore */ }
-
+  
   dreamVideo.src = videoSrc;
   dreamVideo.load();
 
@@ -2135,9 +2156,9 @@ function loadVideo(videoSrc, opts) {
  */
 function playVideo() {
   const { dreamVideo } = getElements();
-
+  
   if (!dreamVideo || !dreamVideo.src) return Promise.resolve();
-
+  
   return dreamVideo.play().catch(function (error) {
     console.warn('Video autoplay prevented:', error);
   });
@@ -2573,8 +2594,8 @@ function handleStartDream() {
     setAppState('active');
     requestWakeLock();
 
-    hideTransition();
-    updateProgress(0);
+            hideTransition();
+            updateProgress(0);
 
     startDreamPrepSequence(el, world, mood, userName);
   } catch (error) {
@@ -2618,7 +2639,12 @@ async function fetchStoryAndSpeak(userName, world, mood) {
     updateProgress(30);
     
     // Fetch story from backend
-    const response = await fetch(apiUrl(`/api/story/${encodeURIComponent(world)}/${encodeURIComponent(mood)}`));
+    const apiBase = getApiBase();
+    const isLocalFastApi = /localhost:8000$/i.test(apiBase || '');
+    const storyUrl = isLocalFastApi
+      ? apiUrl(`/story/${encodeURIComponent(world)}/${encodeURIComponent(mood)}`)
+      : apiUrl(`/api/story?world=${encodeURIComponent(world)}&mood=${encodeURIComponent(mood)}`);
+    const response = await fetch(storyUrl);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -2856,7 +2882,7 @@ function selectMood(mood) {
   if (emailScreen && emailScreen.classList.contains('is-visible') && appState.world) {
     startJourneyAudioPreload(appState.world, mood);
   }
-
+  
   console.log('Mood selected:', mood);
 }
 
@@ -3338,7 +3364,7 @@ function init() {
     if (ambientAudioEl) {
       ambientAudioEl.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     }
-
+    
     // Set default mood to calm
     selectMood('calm');
     
@@ -3362,7 +3388,7 @@ function init() {
         console.log('DREAMEVO: short-lived media URLs enabled (R2 presign)');
       }
     });
-
+    
     console.log('DreamPulse Premium initialized');
     console.log('TTS voices available:', voices.length);
   } catch (error) {

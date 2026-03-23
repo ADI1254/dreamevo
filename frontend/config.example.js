@@ -24,6 +24,8 @@
   // window.DREAMEVO_INTRO_VIDEO_URL = 'https://media.yourdomain.com/intro_video.mp4';
   /** Optional: prefix assets/videos/... paths (mirror same paths on R2) */
   // window.DREAMEVO_MEDIA_BASE_URL = 'https://media.yourdomain.com';
+  /** Optional: base URL hosting journey_mode.mp3/devotional_mode.mp3/romantic_mode.mp3 */
+  // window.DREAMEVO_MODE_AUDIO_BASE_URL = 'https://media.yourdomain.com';
   /** Optional: stem MP3s folder on R2 (trailing slash optional) */
   // window.DREAMEVO_STEMS_BASE_URL = 'https://media.yourdomain.com/cinematic';
   /** Optional local override if stems are hosted by backend static route */

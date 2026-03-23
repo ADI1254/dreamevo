@@ -2445,6 +2445,62 @@ body:not(.view-landing) {
   }
 }
 
+@media (max-width: 480px) {
+  .landing-hero {
+    padding:
+      calc(1.4rem + var(--safe-top))
+      calc(0.7rem + var(--safe-right))
+      calc(2.6rem + var(--safe-bottom))
+      calc(0.7rem + var(--safe-left));
+  }
+  .landing-hero-desc {
+    font-size: 0.95rem;
+    max-width: 95%;
+  }
+  .landing-trust {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: center;
+  }
+  .landing-worlds {
+    padding: 3.2rem 0.7rem;
+  }
+  .landing-world-cards {
+    gap: 0.9rem;
+  }
+  .landing-world-card-wrap {
+    min-width: 0;
+    width: 100%;
+    max-width: 340px;
+  }
+  .landing-world-card {
+    border-radius: 18px;
+  }
+  .landing-contact-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .landing-contact-email {
+    width: 100%;
+    justify-content: center;
+  }
+  .email-collection-card {
+    width: calc(100% - 1rem);
+    max-width: 540px;
+    padding: 1rem 0.95rem;
+    border-radius: 16px;
+  }
+  .dream-prep-inner {
+    width: calc(100% - 0.9rem);
+  }
+  .dream-prep-panel {
+    padding: 1rem 0.95rem;
+  }
+  .dream-prep-title {
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
+  }
+}
+
 /* Brand Block - Top Center */
 .brand-block {
   position: absolute;

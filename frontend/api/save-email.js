@@ -56,8 +56,10 @@ function isRateLimited(req) {
 
 async function verifyTurnstile(token, ip) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
+  const enforce = String(process.env.TURNSTILE_ENFORCE || '').trim() === '1';
   if (!secret) return { ok: true, skipped: true };
-  if (!token) return { ok: false, error: 'Missing captcha token' };
+  // Allow gradual rollout: if secret exists but token is absent, only block when explicitly enforced.
+  if (!token) return enforce ? { ok: false, error: 'Missing captcha token' } : { ok: true, skipped: true };
 
   const params = new URLSearchParams();
   params.set('secret', secret);
