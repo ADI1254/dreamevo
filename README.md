@@ -41,28 +41,30 @@ python -m http.server 3000
 - **Backend API**: http://localhost:8000
 - **Backend Health Check**: http://localhost:8000/
 
-## Deploy (GitHub → Vercel + Render)
+## Deploy (GitHub → Vercel)
+
+**Recommended MVP:** **Vercel** hosts the static app **and** serverless APIs (`/api/save-email`, `/api/story/...`) — no Render cold starts. See **[`frontend/VERCEL_DEPLOY.md`](frontend/VERCEL_DEPLOY.md)** for env vars and Supabase setup.
 
 - **Push only necessary files (lean repo):** [`docs/LEAN_PUSH_TO_GITHUB.md`](docs/LEAN_PUSH_TO_GITHUB.md)  
 - **Push (generic):** [`docs/PUSH_TO_GITHUB.md`](docs/PUSH_TO_GITHUB.md)  
-- **Automate deploy + Cloudflare media (no shared passwords):** [`docs/AUTOMATED_DEPLOY_AND_CLOUDFLARE.md`](docs/AUTOMATED_DEPLOY_AND_CLOUDFLARE.md)  
-- **Frontend on Vercel:** [`frontend/VERCEL_DEPLOY.md`](frontend/VERCEL_DEPLOY.md)  
-- **Backend on Render:** [`docs/HOSTING_FRONTEND_AND_BACKEND.md`](docs/HOSTING_FRONTEND_AND_BACKEND.md)
+- **Automate deploy + Cloudflare media:** [`docs/AUTOMATED_DEPLOY_AND_CLOUDFLARE.md`](docs/AUTOMATED_DEPLOY_AND_CLOUDFLARE.md)  
+- **Optional legacy:** separate FastAPI host — [`docs/HOSTING_FRONTEND_AND_BACKEND.md`](docs/HOSTING_FRONTEND_AND_BACKEND.md)
 
 ## Project Structure
 
 ```
 dreampulse/
 ├── backend/
-│   ├── main.py          # FastAPI backend server
-│   └── stories/          # Story text files
+│   ├── main.py          # Optional FastAPI (local / legacy)
+│   └── stories/         # Source stories (copied to frontend/data/stories for Vercel)
 ├── frontend/
-│   ├── index.html       # Main HTML
-│   ├── style.css        # Cinematic styles
-│   ├── script.js        # Application logic
-│   ├── server.py        # Frontend HTTP server
-│   └── assets/          # Images, videos, audio
-└── start_all.bat        # Start both servers
+│   ├── api/             # Vercel serverless: save-email, story, media stubs
+│   ├── data/stories/    # Story .txt served by /api/story/...
+│   ├── index.html
+│   ├── script.js
+│   ├── style.css
+│   └── assets/
+└── start_all.bat
 ```
 
 ## Requirements

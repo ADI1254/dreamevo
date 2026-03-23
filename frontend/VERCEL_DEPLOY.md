@@ -1,55 +1,84 @@
-# Deploy the DREAMEVO frontend on Vercel
+# Deploy DREAMEVO on Vercel (frontend + serverless API)
 
-The app is **static HTML/CSS/JS** in this folder.
+**MVP architecture:** one Vercel project serves static files **and** `/api/*` serverless functions. No separate Python/Render host is required for email capture or story text.
 
-**Important:** Vercel runs this **frontend** beautifully, but it does **not** run your **FastAPI** server (`uvicorn main:app`) the same way a Python host does. So the **backend** usually lives on **another service** (Railway, Render, Fly.io, etc.), and you point the frontend at it with `DREAMEVO_API_BASE`. That’s still “using Vercel for the site”—just not “one Vercel box running Python 24/7.”
+| Layer | Role |
+|--------|------|
+| **Vercel** | Static site + Node serverless (`/api/save-email`, `/api/story/...`, optional media stubs) |
+| **Supabase** | Postgres (`email_captures`, optional analytics with anon key in `config.js`) |
+| **Cloudflare** | DNS / CDN in front of Vercel (optional) |
 
-**Full explanation + step-by-step backend hosting:** see **`../docs/HOSTING_FRONTEND_AND_BACKEND.md`**.
+## 1. Import the repo
 
-The Python API must be reachable over **HTTPS** and allowed by **CORS** (already `allow_origins=["*"]` in `backend/main.py` for development—tighten for production).
+1. [Vercel](https://vercel.com) → **Add New…** → **Project** → import repo.
+2. **Root Directory**: `frontend`.
+3. **Framework Preset**: **Other**.
+4. **Build Command**: `npm run vercel-build` (see `vercel.json`).
+5. **Output Directory**: `.`
+6. **Install Command**: `npm install` (installs `@supabase/supabase-js` for API routes).
 
-## 1. Push the repo to GitHub (or GitLab / Bitbucket)
+## 2. Environment variables (Vercel)
 
-## 2. Create a Vercel project
+**Serverless API (required for email waitlist):**
 
-1. [Vercel Dashboard](https://vercel.com) → **Add New…** → **Project** → import the repo.
-2. **Root Directory**: set to `frontend` (this folder).
-3. **Framework Preset**: **Other** (or “No framework”).
-4. **Build Command**: `npm run vercel-build` (already in `vercel.json`).
-5. **Output Directory**: `.` (current directory).
-6. **Install Command**: `npm install` (default).
+| Name | Required | Notes |
+|------|----------|--------|
+| `SUPABASE_URL` | **Yes** | Project URL from Supabase → Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Yes** | **Server only.** Never expose in the browser or commit. |
 
-## 3. Environment variables (Vercel)
+**Build-time / client (optional — injected into `config.runtime.js`):**
 
-Set in **Vercel → Project → Settings → Environment Variables**. `npm run vercel-build` writes `config.runtime.js` from these:
+| Name | Notes |
+|------|--------|
+| `DREAMEVO_API_BASE` | Usually **omit** on Vercel (same-origin `/api`). Set only if API is on another origin. |
+| `DREAMEVO_INTRO_VIDEO_URL` | Full URL to intro MP4 if not using `/static/intro_video.mp4` |
+| `DREAMEVO_MEDIA_BASE_URL` | Prefix for `assets/videos/...` |
+| `DREAMEVO_STEMS_BASE_URL` | Stem MP3s base URL |
+| `DREAMEVO_AMBIENT_URL` | Landing ambient loop URL |
 
-| Name | Required | Example |
-|------|----------|---------|
-| `DREAMEVO_API_BASE` | **Yes** for production | `https://your-api.onrender.com` (no trailing slash) |
-| `DREAMEVO_INTRO_VIDEO_URL` | No | `https://media.yourdomain.com/intro_video.mp4` (e.g. Cloudflare R2 public URL) |
-| `DREAMEVO_MEDIA_BASE_URL` | No | `https://media.yourdomain.com` — prefixes `assets/videos/...` |
-| `DREAMEVO_STEMS_BASE_URL` | No | `https://media.yourdomain.com/cinematic` — stem MP3s |
-| `DREAMEVO_AMBIENT_URL` | No | `https://media.yourdomain.com/ambient.mp3` |
+**Client Supabase (optional):** For `journey_analytics` / `feedback` / `site_settings`, keep `config.js` (from `config.example.js`) with **anon** key — not the service role.
 
-See **`docs/AUTOMATED_DEPLOY_AND_CLOUDFLARE.md`** for CORS on R2 and the full automation flow.
+## 3. Supabase: `email_captures`
 
-## 4. Optional: Supabase / `config.js`
+Ensure a **unique constraint** on `email` so upserts work:
 
-`config.js` is **gitignored** locally. On Vercel you can:
+```sql
+create table if not exists public.email_captures (
+  email text primary key,
+  captured_at timestamptz not null default now(),
+  source text,
+  mode_selected text,
+  user_agent text
+);
+```
 
-- Add **Environment Variables** for any future build-time injection, or  
-- Use Vercel’s **Sensitive** env vars + extend `scripts/vercel-build.js` to emit them into `config.runtime.js`.
+## 4. Local development
 
-For local dev, keep copying `config.example.js` → `config.js` as today.
+```bash
+cd frontend
+npm install
+cp .env.local.example .env.local
+# Edit .env.local with real Supabase URL + service role
+npx vercel dev
+```
 
-## 5. Backend checklist
+Open the URL Vercel prints (often `http://localhost:3000`). Email submit and `/api/story/...` work against local serverless.
 
-- Deploy FastAPI with **`/story/{world}/{mood}`** and **`/static/intro_video.mp4`** (see `backend/main.py`).
-- Set **`DREAMEVO_API_BASE`** on Vercel to that deployment’s **https** origin.
-- Ensure story files exist for each **world** × **mood** you offer (`journey`, `sanctuary`, `clearing` × `calm`, `confident`, `curious`).
+**Plain `python server.py` or `http.server`:** API routes are **not** available unless you use `vercel dev`.
 
-## 6. Deploy
+## 5. Legacy Python backend (`backend/main.py`)
 
-Push to your main branch (or connect a preview branch). Vercel builds and serves the site.
+Optional for local TTS/video experiments. **Not required** for production if you deploy only the Vercel project above.
 
-**Note:** `debug.js` is still loaded in `index.html`; remove or gate it for production if you do not want extra logging.
+## 6. File map
+
+```
+frontend/
+├── api/
+│   ├── save-email.js          # POST /api/save-email
+│   ├── story/[world]/[mood].js # GET /api/story/:world/:mood
+│   └── media/                 # stubs (presign disabled on MVP)
+├── data/stories/              # Story .txt files for serverless
+├── scripts/vercel-build.js    # Writes config.runtime.js from env
+└── vercel.json
+```

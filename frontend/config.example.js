@@ -18,8 +18,8 @@
   // window.DREAMEVO_OWNER_EMAILS = ['owner@dreamevo.com'];
   /** Private route key required on admin page URL: admin.html?k=YOUR_KEY */
   // window.DREAMEVO_OWNER_ROUTE_KEY = 'change-this-private-key';
-  /** API origin for /story/... and /static/intro_video.mp4 (default http://localhost:8000) */
-  // window.DREAMEVO_API_BASE = 'https://api.yourdomain.com';
+  /** API origin for /api/* (default: same origin on Vercel; use for local `vercel dev` if needed) */
+  // window.DREAMEVO_API_BASE = 'http://localhost:3000';
   /** Optional: full URL to intro clip (overrides default API_BASE/static/intro_video.mp4) */
   // window.DREAMEVO_INTRO_VIDEO_URL = 'https://media.yourdomain.com/intro_video.mp4';
   /** Optional: prefix assets/videos/... paths (mirror same paths on R2) */

@@ -1,0 +1,47 @@
+# Journey Act 1 Opening — TTS Script (parseable)
+# Replace {USER_NAME} at runtime for personalization. Default for pre-rendered: friend
+# Lines: [PAUSE Xs] = silence duration; all other non-empty, non-comment lines = speech
+
+[PAUSE 2s]
+{USER_NAME}.
+[PAUSE 1s]
+The wind moves before you do.
+[PAUSE 1.5s]
+You are at the edge of something.
+[PAUSE 2s]
+Not lost. Not yet. Just … here.
+[PAUSE 2s]
+[PAUSE 1s]
+One step.
+[PAUSE 1.5s]
+Then another.
+[PAUSE 1.5s]
+The path doesn't ask where you're going. It only asks that you move.
+[PAUSE 2s]
+[PAUSE 1s]
+{USER_NAME}, the trees have been waiting. Not for a hero. For someone willing to walk.
+[PAUSE 2.5s]
+[PAUSE 1s]
+You breathe in.
+[PAUSE 1.5s]
+You breathe out.
+[PAUSE 1.5s]
+The air here is different. Older. Quieter.
+[PAUSE 2s]
+There is no hurry. There is only this moment. And the next step.
+[PAUSE 2.5s]
+[PAUSE 1.5s]
+Something ahead is pulling. Not with a hand. With silence.
+[PAUSE 2s]
+[PAUSE 1s]
+{USER_NAME}, the journey doesn't promise an answer. It promises that you will not walk it alone.
+[PAUSE 2s]
+The path is under your feet. The sky is above. The rest … we find as we go.
+[PAUSE 2.5s]
+[PAUSE 2s]
+You are here.
+[PAUSE 1.5s]
+You are moving.
+[PAUSE 2s]
+That is enough.
+[PAUSE 3s]

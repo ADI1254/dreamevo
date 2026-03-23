@@ -1,7 +1,11 @@
-from fastapi import FastAPI
+import os
+
+from fastapi import Body, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+
+from media_secure import build_presign_response, presign_configured
 
 app = FastAPI(title="DREAMEVO Backend")
 
@@ -53,4 +57,32 @@ def get_claude_tts():
 
     story_text = story_path.read_text(encoding="utf-8")
     return {"world": "claude", "mood": "tts", "story": story_text}
+
+
+def _client_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for") or request.headers.get("X-Forwarded-For")
+    if xff:
+        return xff.split(",")[0].strip()
+    if request.client:
+        return request.client.host
+    return "unknown"
+
+
+@app.get("/media/status")
+def media_status():
+    """Frontend calls this to see if short-lived R2 URLs are available."""
+    ttl = int(os.getenv("R2_PRESIGN_EXPIRES", "900"))
+    return {"presign_enabled": presign_configured(), "ttl_seconds": ttl}
+
+
+@app.post("/media/presign")
+def media_presign(request: Request, body: dict = Body(...)):
+    """
+    Return presigned GET URLs (expire in minutes). Keys are derived server-side from
+    allowed world/mood/parts only — not arbitrary paths.
+    """
+    items = body.get("items")
+    if not isinstance(items, list):
+        return {"error": "invalid_body", "presign_enabled": presign_configured()}
+    return build_presign_response(items, _client_ip(request))
 

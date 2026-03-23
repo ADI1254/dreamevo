@@ -1,8 +1,15 @@
 {
   "name": "dreamevo-frontend",
   "private": true,
-  "description": "Static DREAMEVO UI; Vercel runs vercel-build to inject API URL",
+  "description": "DREAMEVO UI + Vercel serverless API (email, stories)",
   "scripts": {
-    "vercel-build": "node scripts/vercel-build.js"
+    "vercel-build": "node scripts/vercel-build.js",
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1"
+  },
+  "devDependencies": {
+    "vercel": "^39.0.0"
   }
 }

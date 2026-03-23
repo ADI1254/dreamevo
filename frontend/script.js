@@ -325,13 +325,12 @@ function isValidEmail(value) {
 }
 
 /**
- * Save email to Supabase table email_captures.
- * Uses upsert: one row per email (updates captured_at if email already exists).
- * Sends mode_selected (world) and user_agent to match your schema.
+ * Save email via Vercel serverless POST /api/save-email (service role on server — no anon key in browser).
+ * Uses upsert: one row per email in Supabase email_captures.
  * On failure: log, show toast, but always resolve so user can proceed to audio.
  */
 function saveEmailToSupabase(email, opts) {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  if (typeof window !== 'undefined' && window.DREAMEVO_DISABLE_EMAIL_API) {
     return Promise.resolve();
   }
   var source = (opts && opts.source) ? opts.source : 'app_start';
@@ -340,28 +339,22 @@ function saveEmailToSupabase(email, opts) {
     : ((appState && appState.world) ? appState.world : null);
   var payload = {
     email: email.trim().toLowerCase(),
-    captured_at: new Date().toISOString(),
     source: source,
     mode_selected: modeSel,
     user_agent: typeof navigator !== 'undefined' && navigator.userAgent ? navigator.userAgent : null
   };
-  return fetch(`${SUPABASE_URL.replace(/\/$/, '')}/rest/v1/email_captures`, {
+  return fetch(apiUrl('/api/save-email'), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-      'Prefer': 'return=minimal,resolution=merge-duplicates'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   }).then(function (res) {
     if (!res.ok) {
-      console.error('Supabase email_captures save failed:', res.status, res.statusText);
+      console.error('save-email failed:', res.status, res.statusText);
       showToast("Couldn't save email, but enjoy your journey!");
     }
     return Promise.resolve();
   }).catch(function (err) {
-    console.error('Supabase email_captures save failed:', err);
+    console.error('save-email failed:', err);
     showToast("Couldn't save email, but enjoy your journey!");
     return Promise.resolve();
   });
@@ -404,7 +397,6 @@ function startJourneyAudioPreload(world, mood) {
   var basePath = STEM_CONFIG.basePath;
   var format = STEM_CONFIG.format;
   var stemPrefix = world + '_' + mood;
-  var narrationUrl = basePath + stemPrefix + '_narration' + format;
   var btn = document.getElementById('emailCollectionSubmit');
   var loadingEl = document.getElementById('emailPreloadLoading');
   var errorEl = document.getElementById('emailPreloadError');
@@ -434,8 +426,6 @@ function startJourneyAudioPreload(world, mood) {
 
   journeyPreloadWorld = world;
   journeyPreloadMood = mood;
-  var audio = new Audio();
-  audio.preload = 'auto';
 
   function setReady() {
     journeyPreloadReady = true;
@@ -466,21 +456,42 @@ function startJourneyAudioPreload(world, mood) {
     if (journeyPreloadReady) return;
     setReady();
   }
-  audio.addEventListener('loadeddata', markReady, { once: true });
-  audio.addEventListener('canplaythrough', markReady, { once: true });
-  audio.addEventListener('error', function () {
-    setError();
-  }, { once: true });
 
-  audio.src = narrationUrl;
-  journeyPreloadAudio = audio;
-
-  journeyPreloadTimeout = setTimeout(function () {
-    journeyPreloadTimeout = null;
-    if (!journeyPreloadReady && !journeyPreloadError) {
+  function wirePreloadAudio(narrationUrlFinal) {
+    var audio = new Audio();
+    audio.preload = 'auto';
+    audio.addEventListener('loadeddata', markReady, { once: true });
+    audio.addEventListener('canplaythrough', markReady, { once: true });
+    audio.addEventListener('error', function () {
       setError();
+    }, { once: true });
+    audio.src = narrationUrlFinal;
+    journeyPreloadAudio = audio;
+    journeyPreloadTimeout = setTimeout(function () {
+      journeyPreloadTimeout = null;
+      if (!journeyPreloadReady && !journeyPreloadError) {
+        setError();
+      }
+    }, 15000);
+  }
+
+  var fallbackNarration = basePath + stemPrefix + '_narration' + format;
+  fetchMediaPresignStatus(function () {
+    if (_mediaPresignEnabled) {
+      presignJourneyMedia(world, mood, function (err) {
+        var url =
+          !err &&
+          window.__secureMediaUrls &&
+          window.__secureMediaUrls.stems &&
+          window.__secureMediaUrls.stems.narration
+            ? window.__secureMediaUrls.stems.narration
+            : fallbackNarration;
+        wirePreloadAudio(url);
+      });
+    } else {
+      wirePreloadAudio(fallbackNarration);
     }
-  }, 15000);
+  });
 }
 
 function requestWakeLock() {
@@ -1088,7 +1099,14 @@ function attemptStemPlayback(world, mood, onComplete) {
     ambient: `${basePath}${stemPrefix}_ambient${format}`,
     sfx: `${basePath}${stemPrefix}_sfx${format}`
   };
-  
+
+  if (window.__secureMediaUrls && window.__secureMediaUrls.stems) {
+    var st = window.__secureMediaUrls.stems;
+    if (st.narration) files.narration = st.narration;
+    if (st.ambient) files.ambient = st.ambient;
+    if (st.sfx) files.sfx = st.sfx;
+  }
+
   console.log('🎬 Attempting to load stems:', files);
   
   // Load stems with error handling
@@ -1797,27 +1815,113 @@ function resolveMediaUrl(relativePath) {
   return base + '/' + String(relativePath).replace(/^\/+/, '');
 }
 
-/** Backend API origin (stories + /static/intro_video.mp4). Override in config.js for production. */
+/**
+ * API origin for Vercel serverless routes (/api/*).
+ * Empty string = same origin (production on Vercel).
+ * Override DREAMEVO_API_BASE for local `vercel dev` on a fixed port or legacy setups.
+ */
 function getApiBase() {
   if (typeof window !== 'undefined' && window.DREAMEVO_API_BASE) {
     return String(window.DREAMEVO_API_BASE).replace(/\/$/, '');
   }
-  return 'http://localhost:8000';
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return '';
+  }
+  return 'http://localhost:3000';
+}
+
+/** Build absolute URL for /api/... and paths. Same-origin when getApiBase() is ''. */
+function apiUrl(path) {
+  var p = path.startsWith('/') ? path : '/' + path;
+  var base = getApiBase();
+  if (!base) return p;
+  return base.replace(/\/$/, '') + p;
+}
+
+// --- Short-lived media URLs (R2 presign via API). Not “unbreakable”; raises bar vs static CDN links. ---
+var _mediaPresignEnabled = null;
+var _mediaPresignTTL = 900;
+/** @type {{ intro?: string, ambient?: string, stems?: Record<string, string> } | null} */
+window.__secureMediaUrls = null;
+
+function fetchMediaPresignStatus(cb) {
+  if (_mediaPresignEnabled !== null) {
+    if (cb) cb();
+    return;
+  }
+  fetch(apiUrl('/api/media/status'))
+    .then(function (r) {
+      return r.json();
+    })
+    .then(function (d) {
+      _mediaPresignEnabled = !!d.presign_enabled;
+      if (d.ttl_seconds) _mediaPresignTTL = d.ttl_seconds;
+      if (cb) cb();
+    })
+    .catch(function () {
+      _mediaPresignEnabled = false;
+      if (cb) cb();
+    });
+}
+
+function buildPresignItems(world, mood) {
+  return [
+    { kind: 'intro' },
+    { kind: 'ambient' },
+    { kind: 'stem', world: world, mood: mood, part: 'narration' },
+    { kind: 'stem', world: world, mood: mood, part: 'ambient' },
+    { kind: 'stem', world: world, mood: mood, part: 'sfx' }
+  ];
+}
+
+/**
+ * Fills window.__secureMediaUrls when API + R2 are configured on the server.
+ * @param {function(*): void} callback - err is null on success
+ */
+function presignJourneyMedia(world, mood, callback) {
+  fetchMediaPresignStatus(function () {
+    if (!_mediaPresignEnabled) {
+      window.__secureMediaUrls = null;
+      if (callback) callback(null);
+      return;
+    }
+    fetch(apiUrl('/api/media/presign'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: buildPresignItems(world, mood) })
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (d) {
+        if (d.error) {
+          window.__secureMediaUrls = null;
+          if (callback) callback(d.error);
+          return;
+        }
+        window.__secureMediaUrls = d.urls || null;
+        if (callback) callback(null);
+      })
+      .catch(function (e) {
+        window.__secureMediaUrls = null;
+        if (callback) callback(e);
+      });
+  });
 }
 
 /**
  * Intro clip played once when journey audio starts (visual hook; muted so it does not clash with voice/ambient).
- * Uses DREAMEVO_INTRO_VIDEO_URL if set, else backend /static/intro_video.mp4.
+ * Uses presigned intro URL, DREAMEVO_INTRO_VIDEO_URL, or same-origin /static/intro_video.mp4 (e.g. under public/).
  */
 function getJourneyIntroVideoUrl() {
   if (typeof window !== 'undefined' && window.DREAMEVO_INTRO_VIDEO_URL) {
     var cdn = String(window.DREAMEVO_INTRO_VIDEO_URL).trim();
     if (cdn) return cdn;
   }
-  return getApiBase() + '/static/intro_video.mp4';
+  return apiUrl('/static/intro_video.mp4');
 }
 
-/** @deprecated Prefer getJourneyIntroVideoUrl (default is backend static). */
+/** @deprecated Prefer getJourneyIntroVideoUrl (default is /static/intro_video.mp4). */
 function getIntroVideoUrl() {
   return getJourneyIntroVideoUrl();
 }
@@ -2102,7 +2206,8 @@ function startJourneyIntroVideoWithAudio(el) {
     wrap.classList.add('dream-video-wrapper--intro');
   }
 
-  var introUrl = getJourneyIntroVideoUrl();
+  var introUrl =
+    (window.__secureMediaUrls && window.__secureMediaUrls.intro) || getJourneyIntroVideoUrl();
   if (!introUrl || !el.dreamVideo) {
     finishJourneyIntroVideo();
     return;
@@ -2148,6 +2253,22 @@ function beginDreamJourneyMedia(el, world, mood, userName) {
     el.startButton.disabled = false;
     var buttonText = el.startButton.querySelector('.button-text');
     if (buttonText) buttonText.textContent = 'Enter Dream';
+  }
+
+  presignJourneyMedia(world, mood, function (err) {
+    if (err) console.warn('Media presign (optional):', err);
+    beginDreamJourneyMediaContinue(el, world, mood, userName);
+  });
+}
+
+function beginDreamJourneyMediaContinue(el, world, mood, userName) {
+  if (el.ambientAudio && window.__secureMediaUrls && window.__secureMediaUrls.ambient) {
+    var srcEl = el.ambientAudio.querySelector('source');
+    if (srcEl) {
+      srcEl.src = window.__secureMediaUrls.ambient;
+      srcEl.type = 'audio/mpeg';
+    }
+    el.ambientAudio.load();
   }
 
   startJourneyIntroVideoWithAudio(el);
@@ -2310,7 +2431,7 @@ async function fetchStoryAndSpeak(userName, world, mood) {
     updateProgress(30);
     
     // Fetch story from backend
-    const response = await fetch(`${getApiBase()}/story/${world}/${mood}`);
+    const response = await fetch(apiUrl(`/api/story/${encodeURIComponent(world)}/${encodeURIComponent(mood)}`));
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -3048,6 +3169,12 @@ function init() {
     
     syncViewLandingDocClass();
 
+    fetchMediaPresignStatus(function () {
+      if (_mediaPresignEnabled) {
+        console.log('DREAMEVO: short-lived media URLs enabled (R2 presign)');
+      }
+    });
+
     console.log('DreamPulse Premium initialized');
     console.log('TTS voices available:', voices.length);
   } catch (error) {
@@ -3074,6 +3201,8 @@ window.DreamPulse = {
   getIntroVideoUrl,
   getJourneyIntroVideoUrl,
   getApiBase,
+  presignJourneyMedia,
+  fetchMediaPresignStatus,
   getDreamLoopVideoSource,
   selectWorld,
   selectMood,

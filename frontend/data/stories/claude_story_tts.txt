@@ -1,0 +1,127 @@
+# INTO THE WORLD — TTS PERFORMANCE SCRIPT
+# Style: 2nd person, present tense; intimate, reflective
+# Voice: Soft, grounded female; pace 0.82; volume 0.88
+# Guidance: Keep pauses; let silence land; fade ambiences between scenes.
+
+---
+
+[AMBIENT: low forest night | volume 0.18]
+[VOICE]
+You wake in darkness. Your mother hears you calling for help... but you are already gone.
+[PAUSE 2s]
+
+--- ACT ONE — DEPARTURE (min 1-5) ---
+
+[AMBIENT: highway wind + engine idle | vol 0.18]
+[VOICE]
+A trucker drops you at the edge of the wilderness. You leave your wallet, your cards, your past on his dashboard.
+"Keep it," you tell him.
+He hands you rubber boots. "If you make it out alive, give me a call."
+You shoulder your pack and walk into the wild. No phone. No pool. No pets. No cigarettes. Ultimate freedom.
+You are an extremist now. An aesthetic voyager whose home is the road.
+[PAUSE 2s]
+
+[AMBIENT: light wind through metal shell | vol 0.14]
+[VOICE]
+You find it—an abandoned Fairbanks bus. Rusted. Beautiful. Your sanctuary.
+"Hello? Is there anybody here?" Your voice echoes. No answer.
+You howl at the sky. You carve into wood: Alexander Supertramp. May 1992.
+[PAUSE 1.5s]
+
+[AMBIENT: soft crowd murmur | vol 0.12]
+[VOICE]
+Flashback. Graduation day. Your parents smile, proud and oblivious. You see their young faces—about to marry, innocent.
+You want to warn them... but you don't. Instead you say: "Do what you are going to do, and I will tell about it."
+Your father offers a new car. "That Datsun could blow up any day."
+"I don't want a new car. I don't want anything. These things, things, things."
+You measure yourself by a fierce code. You know you'll break away—with characteristic immoderation.
+[PAUSE 2s]
+
+--- ACT TWO — THE JOURNEY (min 6-12) ---
+
+[AMBIENT: campfire + distant ocean | vol 0.16]
+[VOICE]
+On the road, you meet Rainey and Jan. Rubber tramps with open hearts.
+"Where are your mom and dad?" Jan asks.
+"Living their lives somewhere."
+"You look like a loved kid. Be fair."
+You quote Thoreau: "Rather than love, than money, than faith, than fame, than fairness—give me truth."
+Rainey by the fire: "It is important not necessarily to be strong, but to feel strong. To face the blind, deaf stone alone with nothing but your hands and your head."
+[PAUSE 2s]
+
+[AMBIENT: river rapids rising | vol 0.2]
+[VOICE]
+You need a permit to paddle the river. Twelve years' wait.
+"Twelve years? To paddle down a river?" You don't wait.
+You launch anyway. "I'm Supertramp!" You ride the rapids—no permission, no helmet, no fear.
+You paddle to Mexico. A sandstorm steals your kayak. You walk back north, sand in your teeth.
+[PAUSE 1.5s]
+
+[AMBIENT: grain elevator hum | vol 0.14]
+[VOICE]
+In South Dakota, you work the combines. Wayne sees through the bravado.
+"You can't juggle blood and fire forever," he says. "No Alaska till spring. Head south, kid."
+[PAUSE 1.5s]
+
+[AMBIENT: low tension drone | vol 0.1]
+[VOICE]
+Flashback. The family secret.
+Your father was already married when he met your mother. You and Carine—bastard children. The revelation murders every day's truth.
+Violence. Rage. You make Carine promise silence. The road becomes necessary.
+[PAUSE 2s]
+
+[AMBIENT: desert wind + light tinnitus | vol 0.12]
+[VOICE]
+Ron Franz finds you in the desert. An eighty-year-old leatherworker, lonely, grieving.
+"Don't you think you ought to be getting an education?"
+"Careers are a twentieth-century invention. I'm living like this by choice."
+You take him climbing. He's terrified, but does it—for you.
+At the summit, he gasps, alive.
+"When you forgive, you love. And when you love, God's light shines on you."
+"What do you say you let me adopt you?" he asks.
+You promise: after Alaska, you'll talk.
+[PAUSE 2s]
+
+--- ACT THREE — ALASKA & RECKONING (min 13-20) ---
+
+[AMBIENT: harsh wind + distant crow | vol 0.18]
+[VOICE]
+You shoot your first big game. Triumph surges. You can survive.
+But you wait too long. Flies. Maggots. The meat spoils.
+You scream at the sky: "Where are the animals now? I'm hungry!"
+[PAUSE 1.5s]
+
+[AMBIENT: brittle winter hush | vol 0.14]
+[VOICE]
+You forage. Hedysarum alpinum—wild potato root. Safe, you think.
+You eat. Days later, you're violently ill. You misidentified. Or the season was wrong. The river's too high. You're too weak to walk out.
+[PAUSE 2s]
+
+[AMBIENT: near-silence + heartbeat | vol 0.08]
+[VOICE]
+In your journal, your handwriting shakes.
+"Happiness only real when shared."
+You think of Ron. Rainey. Jan. Wayne. Tracy. Your parents—imperfect, human.
+You were right about society's sickness. Wrong about the cure. The cure was not isolation. It was connection. Forgiveness.
+[PAUSE 2.5s]
+
+[AMBIENT: interior bus creak + soft wind | vol 0.1]
+[VOICE]
+Your body fails. You crawl into your sleeping bag.
+"I have had a happy life and thank the Lord. Goodbye and may God bless all."
+Images flood your mind: your mother's face; your father's hand; Carine's laughter; the ocean with Rainey; Ron at the summit; Jan knitting you a hat; Wayne teaching you to combine.
+You see what could have been: returning home, older, wiser, ready to forgive—and be forgiven. But it is too late now.
+Your last thought: "What if I were smiling and running into your arms? Would you see then what I see now?"
+[PAUSE 3s]
+
+--- CLOSING ---
+
+[AMBIENT: faint, warm drone | vol 0.1]
+[VOICE - soft, concluding]
+Carine, voice over:
+"You wrote your story, Chris. Two years you walked the earth. You found what you were looking for, and what you didn't know you needed until it was too late.
+You died alone in that bus. But your story makes us remember. It makes us forgive. It makes us love.
+Because that's what you learned, isn't it?
+That happiness is only real when shared."
+
+[FADE OUT — silence]

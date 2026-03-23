@@ -1,0 +1,273 @@
+# INTO THE WILD — Cinematic Second-Person Script for DreamPulse
+# Converted from film subtitles. Listener = main character. For TTS: short lines, pause markers, {USER_NAME}.
+# Tone: intimate, grounded, cinematic calm. No hype. You are living the story.
+
+═══════════════════════════════════════════════════════════════════
+
+ACT I — THE REFUSAL (0:00–6:00)
+You turn away from the life they built for you.
+
+[PAUSE 2s]
+
+{USER_NAME}.
+
+[PAUSE 1s]
+
+You stand in a room full of gifts you did not ask for.
+
+[PAUSE 1.5s]
+
+A new car. A college fund. A future already drawn in their hand.
+
+[PAUSE 2s]
+
+You do not want a new car.
+
+[PAUSE 1s]
+
+You do not want anything.
+
+[PAUSE 2s]
+
+[LOW ROOM TONE — FAMILY HOME]
+
+They say your name. They say, these things, things, things.
+
+[PAUSE 1.5s]
+
+You are not being difficult. You are being honest.
+
+[PAUSE 2s]
+
+Somewhere inside you, a door has already closed.
+
+[PAUSE 2s]
+
+You have spent years fulfilling a duty that never felt like yours.
+
+[PAUSE 2s]
+
+Graduation is not an end. It is a permission slip.
+
+[PAUSE 2.5s]
+
+You take it. You leave.
+
+[PAUSE 2s]
+
+No note. No good-bye that could be written.
+
+[PAUSE 2s]
+
+You walk out. You do not look back at the skyline you know by heart.
+
+[PAUSE 2.5s]
+
+The road has always led west. You finally follow it.
+
+[PAUSE 3s]
+
+═══════════════════════════════════════════════════════════════════
+
+ACT II — THE ROAD (6:00–14:00)
+Two years. No phone. No address. No one to report to.
+
+[PAUSE 2s]
+
+[WIND — OPEN HIGHWAY, THEN DUST]
+
+You burn the money in your pocket. Not because you hate it. Because you want to see what is left when it is gone.
+
+[PAUSE 2.5s]
+
+You need a new name. You choose one. You write it in the dirt. You wear it like skin.
+
+[PAUSE 2s]
+
+{USER_NAME}, the road teaches you. It does not explain. It shows.
+
+[PAUSE 2s]
+
+You meet people who live in buses and tents. Who have chosen the same kind of poverty. The same kind of freedom.
+
+[PAUSE 2.5s]
+
+[AMBIENCE — DESERT, DISTANT VOICES]
+
+They ask where your family is. You say, living their lives somewhere.
+
+[PAUSE 1.5s]
+
+They say you look like a loved kid. They say, be fair.
+
+[PAUSE 2s]
+
+You are not sure what fair means anymore. You know what true means.
+
+[PAUSE 2s]
+
+You say it out loud. Not love, not money, not fame. Give me truth.
+
+[PAUSE 2.5s]
+
+You mean it. The words are not yours. They are borrowed. They are still true.
+
+[PAUSE 2s]
+
+You eat from the land when you can. You sleep under the sky. You feel the core of your spirit coming from new experiences. Nothing else.
+
+[PAUSE 2.5s]
+
+Someone hands you a hat. Someone says, if you make it out alive, give me a call.
+
+[PAUSE 2s]
+
+You smile. You walk on. The road does not ask where you are going. It only asks that you move.
+
+[PAUSE 3s]
+
+═══════════════════════════════════════════════════════════════════
+
+ACT III — THE TEACHER (14:00–22:00)
+An old man finds you by the river. He has lost a wife and a son. He has stopped running from that loss. He sits in a small house and works leather with his hands.
+
+[PAUSE 2.5s]
+
+[AMBIENCE — WATER, BIRDS, QUIET]
+
+He asks how long you have been out here. You say, a lot of places. Moving around.
+
+[PAUSE 2s]
+
+He asks if you ought to be getting an education. A job. Making something of this life.
+
+[PAUSE 2s]
+
+You tell him careers are a twentieth-century invention. You do not want one. You are living like this by choice.
+
+[PAUSE 2.5s]
+
+In the dirt, he says. Yes, you say. In the dirt.
+
+[PAUSE 2s]
+
+He takes you up a hill. Halfway, he stops. He cannot do these kinds of things anymore. You go to the top alone. When you come down, you describe what you saw. The light. The distance. The Salton Sea like a silver scratch on the world.
+
+[PAUSE 3s]
+
+He tells you that when you forgive, you love. And when you love, something like light shines on you. He does not push. He only says it.
+
+[PAUSE 2.5s]
+
+{USER_NAME}, he offers to drive you. A hundred miles. To where you can catch a ride north. To Alaska. He says he would take you all the way if he did not have an eight o’clock mass.
+
+[PAUSE 2.5s]
+
+He gives you a machete. A collapsible fishing pole. Odds and ends. He says, get started on this thing of yours. On your great adventure.
+
+[PAUSE 2s]
+
+He asks if he can adopt you. Be your grandfather. You say, can we talk about it when I get back from Alaska? He says yes. We can do that.
+
+[PAUSE 2.5s]
+
+You thank him. You get in the truck. You do not look back. You know you might not come back. So does he.
+
+[PAUSE 3s]
+
+═══════════════════════════════════════════════════════════════════
+
+ACT IV — THE NORTH (22:00–30:00)
+Alaska is not a place. It is a test. You have chosen it.
+
+[PAUSE 2s]
+
+[WIND — COLD, OPEN, VAST]
+
+You cross a river. You walk into the wild with a rifle, a bag of rice, a few books. You find a bus. An old, abandoned thing left in the middle of nowhere. It becomes your home. Your fortress. Your trap.
+
+[PAUSE 3s]
+
+For a while, you are not lost. You are found. You hunt. You read. You write in a journal. You name the plants. You learn to call each thing by its right name. That is what the book says. To grasp the meaning of the wild enchantment. To call each thing by its right name.
+
+[PAUSE 3s]
+
+[AMBIENCE — FOREST, SILENCE, OCCASIONAL BIRD]
+
+Then the river swells. The same river you crossed in spring becomes a wall. You cannot get back. You do not have a map that accounts for this. You are stuck. You are alone.
+
+[PAUSE 2.5s]
+
+The seasons turn. The game thins. You run out of bullets. You run out of rice. You eat what you can find. You mistake one plant for another. Your body turns against you. You are no longer the one in charge.
+
+[PAUSE 3s]
+
+You write in the journal anyway. You write that happiness is only real when shared. You did not know that when you left. You know it now. The words do not save you. Nothing saves you. But you write them. You need someone to know.
+
+[PAUSE 3s]
+
+═══════════════════════════════════════════════════════════════════
+
+ACT V — THE LIGHT (30:00–36:00)
+The bus is quiet. The world is quiet. You are too weak to walk far. You lie in the bunk. You look at the ceiling. You think of your sister. Your mother. Your father. The old man by the river. The people who loved you. The people you left.
+
+[PAUSE 3s]
+
+[PAUSE 2s]
+
+{USER_NAME}.
+
+[PAUSE 1.5s]
+
+What if you were smiling? What if you were running into their arms? Would they see then what you see now?
+
+[PAUSE 2.5s]
+
+You are not sure what you see. You see the light through the bus window. You see the trees. You see that you are no longer poisoned by the idea of civilization. You are simply here. In the wild. In the end of the line you chose.
+
+[PAUSE 3s]
+
+You are not sorry. You are not triumphant. You are awake. You have killed the false being within. You have lost. You have also won something you cannot name. Something that was always there, waiting for you to strip everything else away.
+
+[PAUSE 3s]
+
+[AMBIENCE — WIND, DISTANT, GENTLE]
+
+The road led west. It led here. To this bus. To this silence. To this moment where there is no one to perform for. No one to refuse. No one to prove wrong. Only you. Only the wild. Only the light.
+
+[PAUSE 2.5s]
+
+You close your eyes. You are not afraid. You are tired. You have walked the earth. You have asked for truth. You have received it. It was not what you expected. It was what you needed.
+
+[PAUSE 3s]
+
+[LONG PAUSE — 4s]
+
+The wind moves. The trees sing. You are part of everywhere. You are alive. You are here.
+
+[PAUSE 3s]
+
+[END]
+
+═══════════════════════════════════════════════════════════════════
+TTS & PRODUCTION NOTES
+═══════════════════════════════════════════════════════════════════
+
+PLACEHOLDER: Replace {USER_NAME} with the listener's name at runtime.
+PAUSES: Honour [PAUSE 1s], [PAUSE 2s], [PAUSE 2.5s], [PAUSE 3s], [LONG PAUSE 4s].
+SFX CUES: [AMBIENCE ...], [WIND ...], [LOW ROOM TONE ...] are for sound design only; do not speak aloud.
+
+TTS PERFORMANCE:
+- Speed: Slow (0.75–0.85×). Calm, grounded. No melodrama.
+- Tone: Intimate, present. The listener is the protagonist. No "storyteller" distance.
+- Breath: Pause fully at each [PAUSE] marker. Slight stretch on key lines ("Give me truth.", "Would they see then what you see now?")
+- Names: Say {USER_NAME} as the real name; slight softening, not emphasis.
+
+SOUND DESIGN (suggested):
+- Act I: Low room tone / family home → door close → street → car / road.
+- Act II: Open highway wind → desert ambience → distant voices / camp.
+- Act III: Water, birds, quiet → river → truck → road north.
+- Act IV: Cold wind, vast → forest, silence → bus interior, minimal.
+- Act V: Bus interior, very quiet → wind distant → long silence at end.
+
+FILE USE: For pre-rendered TTS, use the same pipeline as journey_act1 (parse lines, skip # and [SFX/AMBIENCE] cues, replace {USER_NAME}, generate with edge-tts + pauses). Can be split into acts (into_the_wild_act1_tts.txt, etc.) for 6–8 min segments.

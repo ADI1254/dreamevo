@@ -1,5 +1,5 @@
 // Allows override via global if backend runs elsewhere
-const STORY_URL = window.DREAM_STORY_URL || 'http://localhost:8000/story/claude/tts';
+const STORY_URL = window.DREAM_STORY_URL || (typeof location !== 'undefined' && location.origin ? location.origin + '/api/story/claude/tts' : 'http://localhost:3000/api/story/claude/tts');
 const AUDIO_BASE = 'assets/audio/CLAUDE_STORY/';
 
 const SCENES = [
