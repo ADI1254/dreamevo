@@ -361,6 +361,14 @@ function saveEmailToSupabase(email, opts) {
   if (typeof window !== 'undefined' && window.DREAMEVO_DISABLE_EMAIL_API) {
     return Promise.resolve();
   }
+  var localNoServerless =
+    typeof window !== 'undefined' &&
+    window.location &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+    !window.DREAMEVO_API_BASE;
+  if (localNoServerless && !window.DREAMEVO_FORCE_LOCAL_EMAIL_API) {
+    return Promise.resolve();
+  }
   var formId = (opts && opts.formId) ? String(opts.formId) : '';
   var turnstileToken = formId ? getTurnstileTokenFromForm(formId) : '';
   var turnstileRequired = !!(typeof window !== 'undefined' && window.DREAMEVO_TURNSTILE_SITE_KEY);
@@ -386,12 +394,21 @@ function saveEmailToSupabase(email, opts) {
   }).then(function (res) {
     if (!res.ok) {
       console.error('save-email failed:', res.status, res.statusText);
-      showToast("Couldn't save email, but enjoy your journey!");
+      var shouldToast =
+        !(typeof window !== 'undefined' &&
+          window.location &&
+          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+          res.status === 404);
+      if (shouldToast) showToast("Couldn't save email, but enjoy your journey!");
     }
     return Promise.resolve();
   }).catch(function (err) {
     console.error('save-email failed:', err);
-    showToast("Couldn't save email, but enjoy your journey!");
+    if (!(typeof window !== 'undefined' &&
+      window.location &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))) {
+      showToast("Couldn't save email, but enjoy your journey!");
+    }
     return Promise.resolve();
   });
 }
@@ -493,12 +510,18 @@ function startJourneyAudioPreload(world, mood) {
     setReady();
   }
 
-  function wirePreloadAudio(narrationUrlFinal) {
+  function wirePreloadAudio(narrationUrlFinal, fallbackUrl) {
     var audio = new Audio();
     audio.preload = 'auto';
     audio.addEventListener('loadeddata', markReady, { once: true });
     audio.addEventListener('canplaythrough', markReady, { once: true });
     audio.addEventListener('error', function () {
+      if (fallbackUrl && fallbackUrl !== narrationUrlFinal) {
+        audio.src = fallbackUrl;
+        audio.load();
+        fallbackUrl = '';
+        return;
+      }
       setError();
     }, { once: true });
     audio.src = narrationUrlFinal;
@@ -511,7 +534,9 @@ function startJourneyAudioPreload(world, mood) {
     }, 15000);
   }
 
-  var fallbackNarration = basePath + stemPrefix + '_narration' + format;
+  var modeNarration = getModeTrackUrl(world);
+  var modeNarrationFallback = getModeTrackFallbackUrl(world);
+  var fallbackNarration = modeNarration || (basePath + stemPrefix + '_narration' + format);
   fetchMediaPresignStatus(function () {
     if (_mediaPresignEnabled) {
       presignJourneyMedia(world, mood, function (err) {
@@ -522,10 +547,10 @@ function startJourneyAudioPreload(world, mood) {
           window.__secureMediaUrls.stems.narration
             ? window.__secureMediaUrls.stems.narration
             : fallbackNarration;
-        wirePreloadAudio(url);
+        wirePreloadAudio(url, modeNarrationFallback);
       });
     } else {
-      wirePreloadAudio(fallbackNarration);
+      wirePreloadAudio(fallbackNarration, modeNarrationFallback);
     }
   });
 }
@@ -804,6 +829,50 @@ const STEM_CONFIG = {
 if (typeof window !== 'undefined' && window.DREAMEVO_STEMS_BASE_URL) {
   var stemsBase = String(window.DREAMEVO_STEMS_BASE_URL).replace(/\/$/, '') + '/';
   STEM_CONFIG.basePath = stemsBase;
+} else if (
+  typeof window !== 'undefined' &&
+  window.location &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+) {
+  // Local dev fallback: backend serves stems from /static/audio_files/
+  STEM_CONFIG.basePath = 'http://localhost:8000/static/audio_files/';
+}
+
+function isLocalHostRuntime() {
+  return (
+    typeof window !== 'undefined' &&
+    window.location &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  );
+}
+
+function getBackendStaticBaseUrl() {
+  if (isLocalHostRuntime() && !window.DREAMEVO_API_BASE) {
+    return 'http://localhost:8000/static';
+  }
+  return apiUrl('/static');
+}
+
+function getModeTrackUrl(world) {
+  var byWorld = {
+    journey: 'journey_mode.mp3',
+    sanctuary: 'devotional_mode.mp3',
+    clearing: 'romantic_mode.mp3'
+  };
+  var file = byWorld[world];
+  if (!file) return '';
+  return getBackendStaticBaseUrl().replace(/\/$/, '') + '/audio_files/' + file;
+}
+
+function getModeTrackFallbackUrl(world) {
+  var byWorld = {
+    journey: 'journey_mode.mp3',
+    sanctuary: 'devotional_mode.mp3',
+    clearing: 'romantic_mode.mp3'
+  };
+  var file = byWorld[world];
+  if (!file) return '';
+  return getBackendStaticBaseUrl().replace(/\/$/, '') + '/' + file;
 }
 
 let stemAudio = {
@@ -1125,15 +1194,17 @@ function attemptStemPlayback(world, mood, onComplete) {
   const stemPrefix = `${world}_${mood}`;
   const basePath = STEM_CONFIG.basePath;
   const format = STEM_CONFIG.format;
+  const singleModeTrack = isLocalHostRuntime() ? getModeTrackUrl(world) : '';
+  const singleModeTrackFallback = isLocalHostRuntime() ? getModeTrackFallbackUrl(world) : '';
   
   // Reset stem state
   stemLoaded = { narration: false, ambient: false, sfx: false };
   
   // Build file paths
   const files = {
-    narration: `${basePath}${stemPrefix}_narration${format}`,
-    ambient: `${basePath}${stemPrefix}_ambient${format}`,
-    sfx: `${basePath}${stemPrefix}_sfx${format}`
+    narration: singleModeTrack || `${basePath}${stemPrefix}_narration${format}`,
+    ambient: singleModeTrack ? null : `${basePath}${stemPrefix}_ambient${format}`,
+    sfx: singleModeTrack ? null : `${basePath}${stemPrefix}_sfx${format}`
   };
 
   if (window.__secureMediaUrls && window.__secureMediaUrls.stems) {
@@ -1147,7 +1218,9 @@ function attemptStemPlayback(world, mood, onComplete) {
   
   // Load stems with error handling
   let loadedCount = 0;
-  const requiredStems = Object.keys(STEM_CONFIG.stems).filter(k => STEM_CONFIG.stems[k]);
+  const requiredStems = singleModeTrack
+    ? ['narration']
+    : Object.keys(STEM_CONFIG.stems).filter(k => STEM_CONFIG.stems[k]);
   
   requiredStems.forEach(stemType => {
     var audio;
@@ -1177,6 +1250,12 @@ function attemptStemPlayback(world, mood, onComplete) {
     }, { once: true });
     
     audio.addEventListener('error', (e) => {
+      if (singleModeTrack && stemType === 'narration' && singleModeTrackFallback && audio.src !== singleModeTrackFallback) {
+        console.warn('Primary mode track missing, trying fallback path:', singleModeTrackFallback);
+        audio.src = singleModeTrackFallback;
+        audio.load();
+        return;
+      }
       console.warn(`❌ Failed to load ${stemType} stem:`, e);
       if (loadedCount === 0) {
         stopAllStems();
@@ -1860,7 +1939,12 @@ function getApiBase() {
   if (typeof window !== 'undefined' && window.DREAMEVO_API_BASE) {
     return String(window.DREAMEVO_API_BASE).replace(/\/$/, '');
   }
-  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+  if (typeof window !== 'undefined' && window.location) {
+    var host = String(window.location.hostname || '').toLowerCase();
+    if (host === 'localhost' || host === '127.0.0.1') {
+      // Local python frontend (3000) + FastAPI backend (8000) flow.
+      return 'http://localhost:8000';
+    }
     return '';
   }
   return 'http://localhost:3000';
@@ -1871,6 +1955,10 @@ function apiUrl(path) {
   var p = path.startsWith('/') ? path : '/' + path;
   var base = getApiBase();
   if (!base) return p;
+  // Local FastAPI backend exposes /story and /media/* (without /api prefix).
+  if (/localhost:8000$/i.test(base) && p.indexOf('/api/') === 0) {
+    p = p.slice(4);
+  }
   return base.replace(/\/$/, '') + p;
 }
 
@@ -2298,6 +2386,69 @@ function beginDreamJourneyMedia(el, world, mood, userName) {
 }
 
 function beginDreamJourneyMediaContinue(el, world, mood, userName) {
+  var modeTrackPrimary = getModeTrackUrl(world);
+  var modeTrackFallback = getModeTrackFallbackUrl(world);
+  var modeTrackOnly = !!(modeTrackPrimary || modeTrackFallback);
+
+  if (modeTrackOnly && el.ambientAudio) {
+    stopAllStems();
+    if (typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.cancel();
+    }
+
+    startJourneyIntroVideoWithAudio(el);
+    setupMediaSession();
+    attachPlaybackPauseHandler(el.ambientAudio);
+
+    var modeAudio = el.ambientAudio;
+    modeAudio.pause();
+    modeAudio.loop = false;
+    modeAudio.volume = 1.0;
+    modeAudio.currentTime = 0;
+    modeAudio.src = modeTrackPrimary || modeTrackFallback;
+    modeAudio.load();
+
+    modeAudio.onerror = function () {
+      if (modeTrackFallback && modeAudio.src !== modeTrackFallback) {
+        modeAudio.src = modeTrackFallback;
+        modeAudio.load();
+        modeAudio.play().catch(function () {});
+        return;
+      }
+      console.warn('Mode track failed to play for world:', world);
+      showConnectionError(function () {
+        hideConnectionError();
+        handleStartDream();
+      });
+    };
+
+    modeAudio.onended = function () {
+      _journeyCompleted = true;
+      clearProgress();
+      setJourneyCompleted();
+      trackEvent('audio_completed', { mode: world, mood: mood });
+      releaseWakeLock();
+      clearMediaSession();
+    };
+
+    setTimeout(function () {
+      modeAudio.play().then(function () {
+        updateMediaSessionState('playing');
+        if (!_audioStartedTracked) {
+          _audioStartedTracked = true;
+          trackEvent('audio_started', { mode: world, mood: mood });
+        }
+      }).catch(function () {
+        console.warn('Mode track autoplay prevented');
+        showConnectionError(function () {
+          hideConnectionError();
+          handleStartDream();
+        });
+      });
+    }, 400);
+    return;
+  }
+
   if (el.ambientAudio && window.__secureMediaUrls && window.__secureMediaUrls.ambient) {
     var srcEl = el.ambientAudio.querySelector('source');
     if (srcEl) {

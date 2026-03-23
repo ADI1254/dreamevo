@@ -26,6 +26,8 @@
   // window.DREAMEVO_MEDIA_BASE_URL = 'https://media.yourdomain.com';
   /** Optional: stem MP3s folder on R2 (trailing slash optional) */
   // window.DREAMEVO_STEMS_BASE_URL = 'https://media.yourdomain.com/cinematic';
+  /** Optional local override if stems are hosted by backend static route */
+  // window.DREAMEVO_STEMS_BASE_URL = 'http://localhost:8000/static/audio_files';
   /** Optional: landing ambient loop from R2 */
   // window.DREAMEVO_AMBIENT_URL = 'https://media.yourdomain.com/ambient.mp3';
   /** Optional: Cloudflare Turnstile site key for anti-bot checks on email forms */
