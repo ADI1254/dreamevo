@@ -4604,6 +4604,14 @@ body.state-active .playback-escape-hatch {
   transform: translateZ(0);
 }
 
+/* First-paint optimization: keep rich look but reduce startup animation cost. */
+body.initial-load .bg-gradient-animated,
+body.initial-load .particle-orb,
+body.initial-load .bg-noise {
+  animation-play-state: paused;
+  opacity: 0.55;
+}
+
 /* Mobile performance mode: reduce heavy background animation cost on low-power devices. */
 @media (max-width: 768px) {
   .bg-noise {

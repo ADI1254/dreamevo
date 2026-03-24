@@ -24,6 +24,7 @@ var _journeyIntroVideoFinished = false;
 var _postIntroReminderShown = false;
 var ENABLE_AUTO_RESUME_POPUP = false;
 var _audioOnlyVisualWorld = 'journey';
+var ENABLE_TTS_RUNTIME = false;
 
 // ============================================
 // Journey progress & returning user (localStorage)
@@ -1718,6 +1719,10 @@ function speakText(text, options = {}, onEnd = null) {
     if (onEnd) onEnd();
     return;
   }
+  if (!ENABLE_TTS_RUNTIME) {
+    if (onEnd) onEnd();
+    return;
+  }
   
   // Check if speech synthesis is available
   if (typeof speechSynthesis === 'undefined') {
@@ -1964,6 +1969,7 @@ function speakStoryNaturally(storyText, mood, onComplete) {
 
 // Initialize voice loading when available
 function initTTS() {
+  if (!ENABLE_TTS_RUNTIME) return;
   if (typeof speechSynthesis !== 'undefined') {
     // Load voices immediately
     loadVoices();
@@ -2944,8 +2950,7 @@ function selectWorld(world) {
       if (textSpan) textSpan.textContent = 'Begin My Journey';
     }
     updateEmailSubmitState();
-    var moodPreload = appState.mood || (el.moodSelect && el.moodSelect.value) || 'calm';
-    startJourneyAudioPreload(world, moodPreload);
+    // Do not preload audio until user clicks "Begin My Journey" (reduces bandwidth/latency).
   }
   console.log('World selected:', world, '→ preload mood:', appState.mood || 'calm');
 }
@@ -2978,11 +2983,7 @@ function selectMood(mood) {
     selectedBtn.classList.add('active');
   }
 
-  // Refresh stem preload if email step is open (same world, new mood = correct audio files)
-  var emailScreen = document.getElementById('emailCollectionScreen');
-  if (emailScreen && emailScreen.classList.contains('is-visible') && appState.world) {
-    startJourneyAudioPreload(appState.world, mood);
-  }
+  // Do not preload audio until user clicks "Begin My Journey".
   
   console.log('Mood selected:', mood);
 }
@@ -2992,6 +2993,12 @@ function selectMood(mood) {
  */
 function init() {
   try {
+    if (document.body) {
+      document.body.classList.add('initial-load');
+      setTimeout(function () {
+        if (document.body) document.body.classList.remove('initial-load');
+      }, 1200);
+    }
     // Get all elements
     getElements();
     initTurnstileWidgets();
@@ -3001,15 +3008,15 @@ function init() {
       if (ambEl) {
         var srcEl = ambEl.querySelector('source');
         if (srcEl) {
+          // Set source without forcing a load on page start.
+          // We start audio only when the journey begins.
           srcEl.src = window.DREAMEVO_AMBIENT_URL;
           srcEl.type = 'audio/mpeg';
         }
-        ambEl.load();
       }
     }
     
-    // Initialize TTS
-    initTTS();
+    // TTS intentionally disabled for launch performance path.
     
     // Set initial state
     setAppState('idle');

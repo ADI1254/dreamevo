@@ -3,3 +3,5 @@ server.py
 requirements.txt
 narration_requirements.txt
 __pycache__/
+script_tts_update.js
+test_flow.js
