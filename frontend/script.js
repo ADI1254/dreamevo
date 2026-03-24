@@ -184,6 +184,7 @@ function hidePostIntroReminderOverlay() {
 function showFeedbackOverlay() {
   var overlay = document.getElementById('feedbackOverlay');
   if (!overlay) return;
+  overlay.removeAttribute('inert');
   overlay.classList.add('dream-prep-overlay--visible');
   overlay.setAttribute('aria-hidden', 'false');
 }
@@ -193,6 +194,7 @@ function hideFeedbackOverlay() {
   if (!overlay) return;
   overlay.classList.remove('dream-prep-overlay--visible');
   overlay.setAttribute('aria-hidden', 'true');
+  overlay.setAttribute('inert', '');
 }
 
 function getAudioOnlyBackgroundForWorld(world) {
@@ -3151,6 +3153,10 @@ function init() {
     if (feedbackForm) {
       feedbackForm.addEventListener('submit', function (e) {
         e.preventDefault();
+        var feedbackOverlay = document.getElementById('feedbackOverlay');
+        var isVisible = !!(feedbackOverlay && feedbackOverlay.classList.contains('dream-prep-overlay--visible'));
+        // Safety guard: never let hidden feedback UI interfere with journey/email flow.
+        if (!isVisible) return;
         var ratingWrap = document.getElementById('feedbackRatingStars');
         var selectedRating = ratingWrap ? Number(ratingWrap.getAttribute('data-selected-rating') || 0) : 0;
         var textArea = document.getElementById('feedbackSuggestionInput');
