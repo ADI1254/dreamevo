@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#0a0a14" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#0a0a14" />
   <meta name="color-scheme" content="dark" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="DREAMEVO" />
@@ -146,34 +148,34 @@
           <p class="landing-section-sub">Tap a mode to begin — three distinct dream experiences</p>
           <div class="landing-world-cards" id="landingWorldCards">
             <div class="landing-world-card-wrap">
-              <article class="landing-world-card landing-world-card--clickable" data-mode="clearing" tabindex="0" role="button" aria-label="Romantic mode — Explore">
+              <article class="landing-world-card landing-world-card--clickable" data-mode="clearing" tabindex="0" role="button" aria-label="Romantic mode — Start">
                 <div class="landing-world-card-img-wrap">
                   <img src="assets/images/romantic.png.png" alt="Romantic" class="landing-world-card-img" />
                 </div>
                 <h3 class="landing-world-name">ROMANTIC</h3>
                 <p class="landing-world-sub">Intimate, reflective experiences under the stars.</p>
-                <button type="button" class="landing-world-btn" data-landing-world="clearing">Explore</button>
+                <button type="button" class="landing-world-btn" data-landing-world="clearing">Start</button>
               </article>
             </div>
             <div class="landing-world-card-wrap landing-world-card-wrap--center landing-world-card-wrap--popular">
               <span class="landing-world-badge">★ Most Popular</span>
-              <article class="landing-world-card landing-world-card--clickable" data-mode="journey" tabindex="0" role="button" aria-label="Journey mode — Explore">
+              <article class="landing-world-card landing-world-card--clickable" data-mode="journey" tabindex="0" role="button" aria-label="Journey mode — Start">
                 <div class="landing-world-card-img-wrap">
                   <img src="assets/images/mainjourney.png.png" alt="Journey" class="landing-world-card-img" />
                 </div>
                 <h3 class="landing-world-name">JOURNEY</h3>
                 <p class="landing-world-sub">Epic adventures through mystical lands. For the adventurer seeking wonder.</p>
-                <button type="button" class="landing-world-btn" data-landing-world="journey" id="exploreJourneyBtn">Explore</button>
+                <button type="button" class="landing-world-btn" data-landing-world="journey" id="exploreJourneyBtn">Start</button>
               </article>
             </div>
             <div class="landing-world-card-wrap">
-              <article class="landing-world-card landing-world-card--clickable" data-mode="sanctuary" tabindex="0" role="button" aria-label="Devotional mode — Enter">
+              <article class="landing-world-card landing-world-card--clickable" data-mode="sanctuary" tabindex="0" role="button" aria-label="Devotional mode — Start">
                 <div class="landing-world-card-img-wrap">
                   <img src="assets/images/devotional.png.png" alt="Devotional" class="landing-world-card-img" />
                 </div>
                 <h3 class="landing-world-name">DEVOTIONAL</h3>
                 <p class="landing-world-sub">Sacred spaces and contemplative journeys. For those seeking inner peace.</p>
-                <button type="button" class="landing-world-btn" data-landing-world="sanctuary">Enter</button>
+                <button type="button" class="landing-world-btn" data-landing-world="sanctuary">Start</button>
               </article>
             </div>
           </div>
@@ -360,6 +362,11 @@
               <span>LinkedIn</span>
             </a>
           </div>
+          <div class="landing-contact-actions landing-contact-actions--feedback">
+            <button type="button" class="landing-contact-email landing-contact-email--secondary" id="openFeedbackBtn" aria-label="Share feedback with DREAMEVO">
+              Share feedback
+            </button>
+          </div>
         </section>
       </div>
     </div>
@@ -522,7 +529,7 @@
             class="dream-video-element"
             playsinline
             webkit-playsinline="true"
-            preload="auto"
+            preload="metadata"
           ></video>
           <div class="video-glow-border"></div>
           <div class="video-overlay-gradient"></div>
@@ -581,12 +588,60 @@
         </div>
       </div>
 
+      <div
+        class="dream-prep-overlay"
+        id="postIntroReminderOverlay"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="postIntroReminderTitle"
+      >
+        <div class="dream-prep-inner">
+          <div class="dream-prep-panel">
+            <p class="dream-prep-kicker">Reminder</p>
+            <h2 class="dream-prep-title" id="postIntroReminderTitle">Now close your eyes and keep headphones on</h2>
+            <p class="dream-prep-lead">Let the audio guide your journey. Avoid switching apps for the best immersion.</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="dream-prep-overlay"
+        id="feedbackOverlay"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="feedbackTitle"
+      >
+        <div class="dream-prep-inner">
+          <div class="dream-prep-panel feedback-panel">
+            <p class="dream-prep-kicker">Your voice matters</p>
+            <h2 class="dream-prep-title" id="feedbackTitle">How was your journey?</h2>
+            <form id="feedbackForm" class="feedback-form" novalidate>
+              <div class="feedback-rating" id="feedbackRatingStars" data-selected-rating="0" aria-label="Rate your experience">
+                <button type="button" class="feedback-star" data-rating="1" aria-pressed="false" aria-label="Rate 1 star">★</button>
+                <button type="button" class="feedback-star" data-rating="2" aria-pressed="false" aria-label="Rate 2 stars">★</button>
+                <button type="button" class="feedback-star" data-rating="3" aria-pressed="false" aria-label="Rate 3 stars">★</button>
+                <button type="button" class="feedback-star" data-rating="4" aria-pressed="false" aria-label="Rate 4 stars">★</button>
+                <button type="button" class="feedback-star" data-rating="5" aria-pressed="false" aria-label="Rate 5 stars">★</button>
+              </div>
+              <label class="visually-hidden" for="feedbackSuggestionInput">Suggestion</label>
+              <textarea id="feedbackSuggestionInput" class="feedback-textarea" rows="4" placeholder="Share your suggestion (optional)"></textarea>
+              <div class="feedback-actions">
+                <button type="submit" class="dream-prep-btn">Send feedback</button>
+                <button type="button" class="edge-case-btn edge-case-btn-secondary" id="feedbackSkipBtn">Skip</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </main>
 
   </div>
 
   <!-- Audio Element (preload=auto for faster start) -->
-  <audio id="ambientAudio" loop preload="auto">
+  <audio id="ambientAudio" loop preload="none">
     <source src="assets/ambient.mp3" type="audio/mpeg" />
   </audio>
 
@@ -595,7 +650,7 @@
   <!-- Optional: copy config.example.js to config.js for Supabase / overrides -->
   <script src="config.js"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-  <script src="script.js?v=26"></script>
-  <script src="debug.js?v=5"></script>
+  <script src="script.js?v=27"></script>
+  <script src="debug.js?v=5" defer></script>
 </body>
 </html>

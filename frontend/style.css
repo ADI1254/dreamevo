@@ -1065,6 +1065,42 @@ body:not(.view-landing) {
   align-items: center;
 }
 
+/* Better scroll affordance on mobile where native scrollbar is subtle/hidden. */
+@media (max-width: 768px) {
+  .landing-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.65) rgba(255, 255, 255, 0.08);
+  }
+  .landing-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .landing-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .landing-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(240, 215, 140, 0.9), rgba(212, 175, 55, 0.85));
+    border-radius: 999px;
+  }
+  .landing-view::after {
+    content: "Swipe up";
+    position: fixed;
+    left: 50%;
+    bottom: calc(14px + var(--safe-bottom));
+    transform: translateX(-50%);
+    padding: 0.38rem 0.68rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: rgba(255, 250, 235, 0.9);
+    background: rgba(7, 10, 24, 0.55);
+    border: 1px solid rgba(212, 175, 55, 0.32);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 35;
+    pointer-events: none;
+  }
+}
+
 /* ----- Nav: moon + DREAMPULSE, links, Sign In ----- */
 .landing-nav {
   position: sticky;
@@ -1612,15 +1648,15 @@ body:not(.view-landing) {
 }
 
 .landing-world-card-wrap--popular .landing-world-btn {
-  border-color: rgba(212, 175, 55, 0.52);
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.34), rgba(212, 175, 55, 0.16));
-  color: #fff6da;
-  font-weight: 600;
+  border-color: rgba(244, 212, 126, 0.35);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.92), rgba(244, 212, 126, 0.84));
+  color: #12121b;
+  font-weight: 700;
 }
 
 .landing-world-card-wrap--popular .landing-world-btn:hover {
-  border-color: rgba(244, 212, 126, 0.75);
-  background: linear-gradient(180deg, rgba(232, 195, 92, 0.42), rgba(212, 175, 55, 0.22));
+  border-color: rgba(244, 212, 126, 0.52);
+  background: linear-gradient(135deg, rgba(222, 188, 86, 0.96), rgba(248, 220, 140, 0.9));
 }
 
 .landing-world-card {
@@ -1701,26 +1737,40 @@ body:not(.view-landing) {
 
 .landing-world-btn {
   margin: 0 1.25rem 1.25rem;
+  display: block;
+  width: calc(100% - 2.5rem);
   min-height: var(--touch-target-min);
-  padding: 0.875rem 1.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  padding: 0.9rem 1.5rem;
+  border-radius: 14px;
+  border: 1px solid rgba(244, 212, 126, 0.35);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.92), rgba(244, 212, 126, 0.84));
+  color: #12121b;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-  transition: background 0.4s ease, border-color 0.4s ease;
+  box-shadow:
+    0 10px 26px rgba(212, 175, 55, 0.28),
+    0 2px 10px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
 }
 
 .landing-world-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.22);
-  transform: none;
-  box-shadow: none;
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 14px 30px rgba(212, 175, 55, 0.34),
+    0 6px 14px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.landing-world-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
 }
 
 @media (max-width: 960px) {
@@ -1909,6 +1959,10 @@ body:not(.view-landing) {
   justify-content: center;
   flex-wrap: wrap;
   gap: 0.65rem;
+}
+
+.landing-contact-actions--feedback {
+  margin-top: 1rem;
 }
 
 .landing-contact-email--secondary {
@@ -2458,10 +2512,10 @@ body:not(.view-landing) {
     order: 1;
   }
   .landing-world-card-wrap--center + .landing-world-card-wrap {
-    order: 2;
+    order: 3;
   }
   .landing-world-cards .landing-world-card-wrap:first-child {
-    order: 3;
+    order: 2;
   }
   /* Stronger highlight for Journey card on mobile */
   .landing-world-card-wrap--popular .landing-world-card {
@@ -3883,6 +3937,48 @@ body.state-active .dream-video-wrapper--intro .dream-video-element {
   pointer-events: none;
 }
 
+/* Audio-only phase: keep a calm visual anchor instead of blank purple scene. */
+.dream-video-wrapper--audio-only {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  aspect-ratio: auto;
+  transform: none !important;
+  pointer-events: none;
+  z-index: 52;
+}
+
+.dream-video-wrapper--audio-only::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(180deg, rgba(8, 10, 22, 0.2) 0%, rgba(8, 10, 22, 0.56) 100%),
+    var(--audio-mode-bg, url("assets/images/mainjourney.png.png"));
+  background-size: cover;
+  background-position: center;
+  filter: saturate(0.95) brightness(0.82);
+  opacity: 1;
+}
+
+.dream-video-wrapper--audio-only::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.03) 0%, rgba(6, 8, 18, 0.24) 70%, rgba(6, 8, 18, 0.5) 100%);
+  pointer-events: none;
+}
+
+/* During audio-only playback, reduce noisy particle motion so the image anchor is clear. */
+body.audio-only-visual .bg-particles-layer,
+body.audio-only-visual .bg-noise {
+  opacity: 0.08;
+}
+
 .video-container {
   position: relative;
   width: 100%;
@@ -3993,6 +4089,17 @@ body.state-active .video-glow-border {
   pointer-events: auto;
 }
 
+/* Post-intro reminder should be passive (non-blocking) and short-lived. */
+#postIntroReminderOverlay {
+  background: rgba(5, 8, 18, 0.38);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#postIntroReminderOverlay.dream-prep-overlay--visible {
+  pointer-events: none;
+}
+
 .dream-prep-inner {
   width: 100%;
   max-width: 520px;
@@ -4080,6 +4187,66 @@ body.state-active .video-glow-border {
 
 .dream-prep-btn:active {
   transform: scale(0.98);
+}
+
+.feedback-panel {
+  max-width: 560px;
+}
+
+.feedback-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.feedback-rating {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.feedback-star {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.feedback-star.is-active,
+.feedback-star:hover {
+  color: #f4d47e;
+  border-color: rgba(244, 212, 126, 0.45);
+  background: rgba(212, 175, 55, 0.16);
+}
+
+.feedback-textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+  resize: vertical;
+  min-height: 92px;
+}
+
+.feedback-textarea:focus {
+  outline: none;
+  border-color: rgba(244, 212, 126, 0.45);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+}
+
+.feedback-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* Playback: tap once — low-contrast pause + scrub at bottom only */
@@ -4435,6 +4602,21 @@ body.state-active .playback-escape-hatch {
 .dream-video-element {
   will-change: transform;
   transform: translateZ(0);
+}
+
+/* Mobile performance mode: reduce heavy background animation cost on low-power devices. */
+@media (max-width: 768px) {
+  .bg-noise {
+    animation: none;
+    opacity: 0.18;
+  }
+  .particle-orb:nth-child(4),
+  .particle-orb:nth-child(5) {
+    display: none;
+  }
+  .bg-gradient-animated {
+    animation-duration: 28s, 6s;
+  }
 }
 
 /* ============================================

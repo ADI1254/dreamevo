@@ -21,6 +21,9 @@ var _journeyCompleted = false;
 var _audioStartedTracked = false;
 var _connectionErrorTryAgain = null;
 var _journeyIntroVideoFinished = false;
+var _postIntroReminderShown = false;
+var ENABLE_AUTO_RESUME_POPUP = false;
+var _audioOnlyVisualWorld = 'journey';
 
 // ============================================
 // Journey progress & returning user (localStorage)
@@ -30,6 +33,7 @@ var STORAGE_KEYS = {
   progress: 'dreampulse_journey_progress',
   completed: 'dreampulse_journey_completed'
 };
+var RETURNING_PROGRESS_MAX_AGE_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 function saveProgress(data) {
   try {
@@ -59,6 +63,18 @@ function clearProgress() {
   try {
     localStorage.removeItem(STORAGE_KEYS.progress);
   } catch (e) {}
+}
+
+function clearJourneyCompleted() {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.completed);
+  } catch (e) {}
+}
+
+function resetJourneyFlagsForFreshStart() {
+  clearProgress();
+  clearJourneyCompleted();
+  _journeyCompleted = false;
 }
 
 /** Keep <html> scroll class in sync with body.view-landing (mobile landing scroll + :has fallback). */
@@ -138,6 +154,86 @@ function hideReturningUserOverlay() {
     overlay.classList.remove('is-visible');
     overlay.setAttribute('aria-hidden', 'true');
   }
+}
+
+function hideAllEdgeOverlays() {
+  hideConnectionError();
+  hideContinueJourneyOverlay();
+  hideReturningUserOverlay();
+}
+
+function showPostIntroReminderOverlay() {
+  if (_postIntroReminderShown) return;
+  var overlay = document.getElementById('postIntroReminderOverlay');
+  if (!overlay) return;
+  _postIntroReminderShown = true;
+  overlay.classList.add('dream-prep-overlay--visible');
+  overlay.setAttribute('aria-hidden', 'false');
+  setTimeout(function () {
+    hidePostIntroReminderOverlay();
+  }, 2400);
+}
+
+function hidePostIntroReminderOverlay() {
+  var overlay = document.getElementById('postIntroReminderOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('dream-prep-overlay--visible');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function showFeedbackOverlay() {
+  var overlay = document.getElementById('feedbackOverlay');
+  if (!overlay) return;
+  overlay.classList.add('dream-prep-overlay--visible');
+  overlay.setAttribute('aria-hidden', 'false');
+}
+
+function hideFeedbackOverlay() {
+  var overlay = document.getElementById('feedbackOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('dream-prep-overlay--visible');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function getAudioOnlyBackgroundForWorld(world) {
+  var w = String(world || 'journey').toLowerCase();
+  if (w === 'sanctuary') return resolveMediaUrl('assets/images/devotional.png.png');
+  if (w === 'clearing') return resolveMediaUrl('assets/images/romantic.png.png');
+  return resolveMediaUrl('assets/images/mainjourney.png.png');
+}
+
+function setAudioOnlyVisualBackground(world) {
+  _audioOnlyVisualWorld = String(world || 'journey').toLowerCase();
+  var wrap = document.getElementById('dreamVideoWrapper');
+  if (!wrap) return;
+  wrap.style.setProperty('--audio-mode-bg', 'url("' + getAudioOnlyBackgroundForWorld(_audioOnlyVisualWorld) + '")');
+}
+
+function showLandingView() {
+  var ws = document.getElementById('worldSelectionScreen');
+  var lv = document.getElementById('landingView');
+  document.body.classList.add('view-landing');
+  syncViewLandingDocClass();
+  if (ws) ws.setAttribute('aria-hidden', 'true');
+  if (lv) lv.setAttribute('aria-hidden', 'false');
+  var emailScreen = document.getElementById('emailCollectionScreen');
+  if (emailScreen) {
+    emailScreen.classList.remove('is-visible', 'is-out');
+    emailScreen.setAttribute('aria-hidden', 'true');
+  }
+  setAppState('idle');
+  hideTransition();
+  stopAllAudio();
+  document.body.classList.remove('audio-only-visual');
+  hideAllEdgeOverlays();
+  hidePostIntroReminderOverlay();
+  hideFeedbackOverlay();
+}
+
+function isRecentProgress(progress) {
+  if (!progress || !progress.savedAt) return false;
+  var age = Date.now() - Number(progress.savedAt || 0);
+  return age >= 0 && age <= RETURNING_PROGRESS_MAX_AGE_MS;
 }
 
 // ============================================
@@ -2319,8 +2415,10 @@ window.addEventListener('pagehide', onPageUnload);
 function finishJourneyIntroVideo() {
   if (_journeyIntroVideoFinished) return;
   _journeyIntroVideoFinished = true;
+  document.body.classList.add('audio-only-visual');
   var wrap = document.getElementById('dreamVideoWrapper');
   if (wrap) {
+    setAudioOnlyVisualBackground(_audioOnlyVisualWorld);
     wrap.classList.remove('dream-video-wrapper--intro');
     wrap.classList.add('dream-video-wrapper--audio-only');
   }
@@ -2342,6 +2440,8 @@ function finishJourneyIntroVideo() {
  */
 function startJourneyIntroVideoWithAudio(el) {
   _journeyIntroVideoFinished = false;
+  _postIntroReminderShown = false;
+  document.body.classList.remove('audio-only-visual');
   appState.suppressChapterVideo = true;
   lastVideoSrc = null;
 
@@ -2364,6 +2464,7 @@ function startJourneyIntroVideoWithAudio(el) {
       el.dreamVideo.removeEventListener('error', onIntroErr);
     }
     finishJourneyIntroVideo();
+    showPostIntroReminderOverlay();
   }
   function onIntroErr() {
     if (el.dreamVideo) {
@@ -2407,6 +2508,7 @@ function beginDreamJourneyMedia(el, world, mood, userName) {
 }
 
 function beginDreamJourneyMediaContinue(el, world, mood, userName) {
+  setAudioOnlyVisualBackground(world);
   var modeTrackPrimary = getModeTrackUrl(world);
   var modeTrackFallback = getModeTrackFallbackUrl(world);
   var modeTrackOnly = !!(modeTrackPrimary || modeTrackFallback);
@@ -2829,6 +2931,11 @@ function selectWorld(world) {
     emailScreen.setAttribute('aria-hidden', 'false');
     emailScreen.classList.remove('is-out');
     emailScreen.classList.add('is-visible');
+    try {
+      if (window.history && window.history.pushState) {
+        window.history.pushState({ screen: 'email', world: world }, '', window.location.href);
+      }
+    } catch (e) {}
     if (emailInput) {
       const storedEmail = typeof localStorage !== 'undefined' ? localStorage.getItem('userEmail') : null;
       emailInput.value = storedEmail || '';
@@ -2921,15 +3028,63 @@ function init() {
       if (ws) ws.setAttribute('aria-hidden', 'false');
       const lv = document.getElementById('landingView');
       if (lv) lv.setAttribute('aria-hidden', 'true');
+      try {
+        if (window.history && window.history.pushState) {
+          window.history.pushState({ screen: 'world' }, '', window.location.href);
+        }
+      } catch (e) {}
       if (typeof preSelectWorld === 'string' && typeof selectWorld === 'function') {
         selectWorld(preSelectWorld);
       }
     }
     
-    // Edge cases: check for abandoned journey or returning user
+    // Browser navigation states (back button): landing -> world -> email overlay.
+    try {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({ screen: 'landing' }, '', window.location.href);
+      }
+      window.addEventListener('popstate', function (event) {
+        var state = event && event.state ? event.state : null;
+        var screen = state && state.screen ? state.screen : 'landing';
+        var emailScreen = document.getElementById('emailCollectionScreen');
+        if (screen === 'email') {
+          document.body.classList.remove('view-landing');
+          syncViewLandingDocClass();
+          var ws = document.getElementById('worldSelectionScreen');
+          var lv = document.getElementById('landingView');
+          if (ws) ws.setAttribute('aria-hidden', 'false');
+          if (lv) lv.setAttribute('aria-hidden', 'true');
+          if (emailScreen) {
+            emailScreen.classList.remove('is-out');
+            emailScreen.classList.add('is-visible');
+            emailScreen.setAttribute('aria-hidden', 'false');
+          }
+          hideAllEdgeOverlays();
+          return;
+        }
+        if (screen === 'world') {
+          document.body.classList.remove('view-landing');
+          syncViewLandingDocClass();
+          var wsOnly = document.getElementById('worldSelectionScreen');
+          var lvOnly = document.getElementById('landingView');
+          if (wsOnly) wsOnly.setAttribute('aria-hidden', 'false');
+          if (lvOnly) lvOnly.setAttribute('aria-hidden', 'true');
+          if (emailScreen) {
+            emailScreen.classList.remove('is-visible', 'is-out');
+            emailScreen.setAttribute('aria-hidden', 'true');
+          }
+          hideAllEdgeOverlays();
+          return;
+        }
+        showLandingView();
+      });
+    } catch (e) {}
+
+    // Edge cases: only recover recent abandoned journey progress
     var progress = getProgress();
     var storedEmail = getAnalyticsUserEmail();
-    if (progress || (getJourneyCompleted() && storedEmail)) {
+    var hasRecentProgress = ENABLE_AUTO_RESUME_POPUP && isRecentProgress(progress);
+    if (hasRecentProgress) {
       document.body.classList.remove('view-landing');
       syncViewLandingDocClass();
       var ws = document.getElementById('worldSelectionScreen');
@@ -2937,10 +3092,11 @@ function init() {
       if (ws) ws.setAttribute('aria-hidden', 'false');
       if (lv) lv.setAttribute('aria-hidden', 'true');
     }
-    if (progress) {
+    if (hasRecentProgress) {
       showContinueJourneyOverlay();
-    } else if (getJourneyCompleted() && storedEmail) {
-      showReturningUserOverlay(storedEmail);
+    } else {
+      // No auto "welcome back" popup; keep entry path frictionless.
+      hideReturningUserOverlay();
     }
     
     // Connection error overlay: Try Again / Download for Offline
@@ -2959,6 +3115,68 @@ function init() {
         showToast('Download for offline coming soon.');
       });
     }
+
+    var feedbackOpenBtn = document.getElementById('openFeedbackBtn');
+    if (feedbackOpenBtn) {
+      feedbackOpenBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        showFeedbackOverlay();
+      });
+    }
+
+    var feedbackSkipBtn = document.getElementById('feedbackSkipBtn');
+    if (feedbackSkipBtn) {
+      feedbackSkipBtn.addEventListener('click', function () {
+        hideFeedbackOverlay();
+      });
+    }
+
+    var feedbackStarsWrap = document.getElementById('feedbackRatingStars');
+    if (feedbackStarsWrap) {
+      feedbackStarsWrap.addEventListener('click', function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest('[data-rating]') : null;
+        if (!btn) return;
+        var rating = Number(btn.getAttribute('data-rating') || 0);
+        var stars = feedbackStarsWrap.querySelectorAll('[data-rating]');
+        stars.forEach(function (s) {
+          var starRating = Number(s.getAttribute('data-rating') || 0);
+          s.classList.toggle('is-active', starRating <= rating);
+          s.setAttribute('aria-pressed', starRating <= rating ? 'true' : 'false');
+        });
+        feedbackStarsWrap.setAttribute('data-selected-rating', String(rating));
+      });
+    }
+
+    var feedbackForm = document.getElementById('feedbackForm');
+    if (feedbackForm) {
+      feedbackForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var ratingWrap = document.getElementById('feedbackRatingStars');
+        var selectedRating = ratingWrap ? Number(ratingWrap.getAttribute('data-selected-rating') || 0) : 0;
+        var textArea = document.getElementById('feedbackSuggestionInput');
+        var comment = textArea && textArea.value ? String(textArea.value).trim() : '';
+        if (!selectedRating && !comment) {
+          showToast('Please add a rating or suggestion.');
+          return;
+        }
+        trackFeedbackSubmitted({
+          rating: selectedRating || null,
+          comment: comment || null,
+          user_email: getAnalyticsUserEmail() || null
+        });
+        showToast('Thank you for your feedback.');
+        hideFeedbackOverlay();
+        feedbackForm.reset();
+        if (ratingWrap) {
+          ratingWrap.setAttribute('data-selected-rating', '0');
+          var resetStars = ratingWrap.querySelectorAll('[data-rating]');
+          resetStars.forEach(function (s) {
+            s.classList.remove('is-active');
+            s.setAttribute('aria-pressed', 'false');
+          });
+        }
+      });
+    }
     
     // Continue journey overlay: Yes / Start Fresh
     var continueYesBtn = document.getElementById('continueJourneyYes');
@@ -2967,6 +3185,7 @@ function init() {
         var p = getProgress();
         clearProgress();
         hideContinueJourneyOverlay();
+        hideReturningUserOverlay();
         if (p && p.world) {
           showWorldSelection(p.world);
           if (p.mood && typeof selectMood === 'function') selectMood(p.mood);
@@ -2984,8 +3203,15 @@ function init() {
     var startFreshBtn = document.getElementById('continueJourneyStartFresh');
     if (startFreshBtn) {
       startFreshBtn.addEventListener('click', function () {
-        clearProgress();
+        resetJourneyFlagsForFreshStart();
         hideContinueJourneyOverlay();
+        hideReturningUserOverlay();
+        showLandingView();
+        try {
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState({ screen: 'landing' }, '', window.location.href);
+          }
+        } catch (e) {}
       });
     }
     
