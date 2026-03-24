@@ -182,19 +182,11 @@ function hidePostIntroReminderOverlay() {
 }
 
 function showFeedbackOverlay() {
-  var overlay = document.getElementById('feedbackOverlay');
-  if (!overlay) return;
-  overlay.removeAttribute('inert');
-  overlay.classList.add('dream-prep-overlay--visible');
-  overlay.setAttribute('aria-hidden', 'false');
+  return;
 }
 
 function hideFeedbackOverlay() {
-  var overlay = document.getElementById('feedbackOverlay');
-  if (!overlay) return;
-  overlay.classList.remove('dream-prep-overlay--visible');
-  overlay.setAttribute('aria-hidden', 'true');
-  overlay.setAttribute('inert', '');
+  return;
 }
 
 function getAudioOnlyBackgroundForWorld(world) {
@@ -3118,71 +3110,6 @@ function init() {
       });
     }
 
-    var feedbackOpenBtn = document.getElementById('openFeedbackBtn');
-    if (feedbackOpenBtn) {
-      feedbackOpenBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        showFeedbackOverlay();
-      });
-    }
-
-    var feedbackSkipBtn = document.getElementById('feedbackSkipBtn');
-    if (feedbackSkipBtn) {
-      feedbackSkipBtn.addEventListener('click', function () {
-        hideFeedbackOverlay();
-      });
-    }
-
-    var feedbackStarsWrap = document.getElementById('feedbackRatingStars');
-    if (feedbackStarsWrap) {
-      feedbackStarsWrap.addEventListener('click', function (e) {
-        var btn = e.target && e.target.closest ? e.target.closest('[data-rating]') : null;
-        if (!btn) return;
-        var rating = Number(btn.getAttribute('data-rating') || 0);
-        var stars = feedbackStarsWrap.querySelectorAll('[data-rating]');
-        stars.forEach(function (s) {
-          var starRating = Number(s.getAttribute('data-rating') || 0);
-          s.classList.toggle('is-active', starRating <= rating);
-          s.setAttribute('aria-pressed', starRating <= rating ? 'true' : 'false');
-        });
-        feedbackStarsWrap.setAttribute('data-selected-rating', String(rating));
-      });
-    }
-
-    var feedbackForm = document.getElementById('feedbackForm');
-    if (feedbackForm) {
-      feedbackForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var feedbackOverlay = document.getElementById('feedbackOverlay');
-        var isVisible = !!(feedbackOverlay && feedbackOverlay.classList.contains('dream-prep-overlay--visible'));
-        // Safety guard: never let hidden feedback UI interfere with journey/email flow.
-        if (!isVisible) return;
-        var ratingWrap = document.getElementById('feedbackRatingStars');
-        var selectedRating = ratingWrap ? Number(ratingWrap.getAttribute('data-selected-rating') || 0) : 0;
-        var textArea = document.getElementById('feedbackSuggestionInput');
-        var comment = textArea && textArea.value ? String(textArea.value).trim() : '';
-        if (!selectedRating && !comment) {
-          showToast('Please add a rating or suggestion.');
-          return;
-        }
-        trackFeedbackSubmitted({
-          rating: selectedRating || null,
-          comment: comment || null,
-          user_email: getAnalyticsUserEmail() || null
-        });
-        showToast('Thank you for your feedback.');
-        hideFeedbackOverlay();
-        feedbackForm.reset();
-        if (ratingWrap) {
-          ratingWrap.setAttribute('data-selected-rating', '0');
-          var resetStars = ratingWrap.querySelectorAll('[data-rating]');
-          resetStars.forEach(function (s) {
-            s.classList.remove('is-active');
-            s.setAttribute('aria-pressed', 'false');
-          });
-        }
-      });
-    }
     
     // Continue journey overlay: Yes / Start Fresh
     var continueYesBtn = document.getElementById('continueJourneyYes');

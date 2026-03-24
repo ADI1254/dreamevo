@@ -362,11 +362,6 @@
               <span>LinkedIn</span>
             </a>
           </div>
-          <div class="landing-contact-actions landing-contact-actions--feedback">
-            <button type="button" class="landing-contact-email landing-contact-email--secondary" id="openFeedbackBtn" aria-label="Share feedback with DREAMEVO">
-              Share feedback
-            </button>
-          </div>
         </section>
       </div>
     </div>
@@ -605,38 +600,6 @@
         </div>
       </div>
 
-      <div
-        class="dream-prep-overlay"
-        id="feedbackOverlay"
-        aria-hidden="true"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="feedbackTitle"
-        inert
-      >
-        <div class="dream-prep-inner">
-          <div class="dream-prep-panel feedback-panel">
-            <p class="dream-prep-kicker">Your voice matters</p>
-            <h2 class="dream-prep-title" id="feedbackTitle">How was your journey?</h2>
-            <form id="feedbackForm" class="feedback-form" novalidate>
-              <div class="feedback-rating" id="feedbackRatingStars" data-selected-rating="0" aria-label="Rate your experience">
-                <button type="button" class="feedback-star" data-rating="1" aria-pressed="false" aria-label="Rate 1 star">★</button>
-                <button type="button" class="feedback-star" data-rating="2" aria-pressed="false" aria-label="Rate 2 stars">★</button>
-                <button type="button" class="feedback-star" data-rating="3" aria-pressed="false" aria-label="Rate 3 stars">★</button>
-                <button type="button" class="feedback-star" data-rating="4" aria-pressed="false" aria-label="Rate 4 stars">★</button>
-                <button type="button" class="feedback-star" data-rating="5" aria-pressed="false" aria-label="Rate 5 stars">★</button>
-              </div>
-              <label class="visually-hidden" for="feedbackSuggestionInput">Suggestion</label>
-              <textarea id="feedbackSuggestionInput" class="feedback-textarea" rows="4" placeholder="Share your suggestion (optional)"></textarea>
-              <div class="feedback-actions">
-                <button type="submit" class="dream-prep-btn">Send feedback</button>
-                <button type="button" class="edge-case-btn edge-case-btn-secondary" id="feedbackSkipBtn">Skip</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
     </main>
 
   </div>
@@ -651,7 +614,7 @@
   <!-- Optional: copy config.example.js to config.js for Supabase / overrides -->
   <script src="config.js"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-  <script src="script.js?v=28"></script>
+  <script src="script.js?v=29"></script>
   <script src="debug.js?v=5" defer></script>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"1d97114c71dd4194adff21d78464415c"}'></script>
 </body>
